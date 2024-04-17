@@ -1,9 +1,17 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express';
+const router = express.Router();
+
+// Import the recipe-related and user-related routes
+import recipesRouter from './recipes.js';
+import usersRouter from './users.js';
+
+// Mount the recipe-related and user-related routes
+router.use('/recipes', recipesRouter);
+router.use('/users', usersRouter);
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) {  // serves as home page for the app
   res.render('index', { title: 'Express' });
 });
 
-module.exports = router;
+export default router;
