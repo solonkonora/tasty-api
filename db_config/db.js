@@ -1,6 +1,6 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import pkg from 'pg';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -26,11 +26,13 @@ app.get('/', async (req, res) => {
     // Test the database connection
     await pool.query('SELECT 1');
     res.send('Database connection successful!');
+    console.log('Database connection successful');
   } catch (err) {
     console.error('Error connecting to the database:', err);
     res.status(500).send('Error connecting to the database: ' + err.message);
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
