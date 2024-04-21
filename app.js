@@ -3,6 +3,10 @@ import express, { json, urlencoded} from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
+//import { uploadImageToCloudinary } from './db_config/cloudinary_config.js';
+import { createCloudinaryFolder, setupImageFolders } from './db_config/cloudinary_config.js';
+
+
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import recipeRouter from './routes/recipes.js';
@@ -17,7 +21,7 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/recipes', recipeRouter);
+app.use('/recipe', recipeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -34,5 +38,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// Use the cloudinary object to upload images and perform other operations
+//const imageUrl = await cloudinary.uploadImageToCloudinary(imageFile);
+
+
+// Call the setupImageFolders function to create the folders in cloudify
+await setupImageFolders();
 
 export default app;
