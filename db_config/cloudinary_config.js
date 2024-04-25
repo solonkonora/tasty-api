@@ -23,13 +23,12 @@ export async function createCloudinaryFolder(folderName) {
 // Example usage: create separate folders for different types of images
 export async function setupImageFolders() {
     await createCloudinaryFolder('food-images');
-    // await createCloudinaryFolder('user-avatars');
-    // await createCloudinaryFolder('other_images');
 }
 
-// Function to upload an image to a Cloudinary folder
 export async function uploadImageToFolder(imagePath, folderName) {
     try {
+        console.log('Image path:', imagePath);
+        console.log('Folder name:', folderName);
         const uploadResponse = await cloudinary.uploader.upload(imagePath, {
             folder: folderName
         });

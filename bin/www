@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
  // Module dependencies.
-import app from '../app';
-var debug = require('debug')('food-recipe-api:server');
+import app from '../app.js';
+import debug from 'debug';
 import { createServer } from 'http';
 
  // 1) Get port from environment and store in Express.
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || 3000);
 app.set('port', port);
 
  // 2) Create HTTP server.
-var server = createServer(app);
+const server = createServer(app);
 
  // 3) Listen on provided port, on all network interfaces.
 server.listen(port);
@@ -64,6 +64,6 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug('food-recipe-api:server')('Listening on ' + bind);
   console.log(`Food Recipe API server is running on port ${addr.port}`);
 }
