@@ -1,104 +1,82 @@
-
-
-// recipe.js
-//Here's an example of how the recipe.js router could interact with the populate_recipe.js module:
-//createRecipe and updateRecipe bcs those are the two that have been defined in the ppopulate_recipe.js for now
-
 import express from 'express';
-import { createRecipe, updateRecipe } from '../db_population/populate_recipe.js';
+import { createCloudinaryFolder, setupImageFolders, uploadImageToFolder } from '../db_config/cloudinary_config.js';
+import pool from '../db_config/db.js'
 import { config } from 'dotenv';
 config();
 
+
 const router = express.Router();
 
-// Create a new recipe
-router.post('/', async (req, res) => {
-  try {
-    const { name, description, image } = req.body;
-    const newRecipe = await createRecipe(name, description, image);
-    res.status(201).json(newRecipe);
-  } catch (err) {
-    res.status(400).json({ error: 'Error creating recipe' });
-  }
-});
-
-// Update an existing recipe
-router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, description, image } = req.body;
-    const updatedRecipe = await updateRecipe(id, name, description, image);
-    res.json(updatedRecipe);
-  } catch (err) {
-    res.status(400).json({ error: 'Error updating recipe' });
-  }
-});
-
-
-
-
-
-
-
-
-// import express from 'express';
-// import db from '../db_config/db.js';
-
-//const router = express.Router();
+// Middleware to parse JSON request bodies
+//router.use(express.json()) // allows you to access the request body data using req.body in the route handlers.
 
 // Get all recipes
 router.get('/', async (req, res) => {
   try {
-    const recipes = await db.query('SELECT * FROM recipes');
-    res.json(recipes);
-  } catch (err) {
-    res.status(500).json({ error: 'Error fetching recipes' });
+    const query = 'SELECT * FROM recipe';
+    const { rows } = await pool.query(query);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve recipes' });
   }
 });
 
-// Get a single recipe by ID
+// Get a recipe by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const [recipe] = await db.query('SELECT * FROM recipes WHERE id = ?', [id]);
+    const recipe = await getRecipeById(id);
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found' });
     }
     res.json(recipe);
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching recipe' });
+    console.error('Error getting recipe:', err);
+    res.status(500).json({ error: 'Error getting recipe' });
   }
 });
 
-// Create a new recipe
+
 router.post('/', async (req, res) => {
   try {
-    const { name, description, image_path } = req.body;
-    const result = await db.query('INSERT INTO recipes (name, description, image_path, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())', [name, description, image_path]);
-    const newRecipe = {
-      id: result.insertId,
-      name,
-      description,
-      image_path,
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    res.status(201).json(newRecipe);
-  } catch (err) {
-    res.status(400).json({ error: 'Error creating recipe' });
+    const { title, description, image_path, created_at, updated_at, categories_id } = req.body;
+
+    // Upload the image to Cloudinary
+    const folderName = 'food-images'; 
+    const uploadedImage = await uploadImageToFolder(image_path, folderName);
+
+    // Get the URL path of the uploaded image
+    const imageUrl = uploadedImage.secure_url;
+
+    // Save the recipe details, including the image path, to the database
+    const query = 'INSERT INTO recipe (title, description, image_path, created_at, updated_at, categories_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const values = [title, description, imageUrl, created_at, updated_at, categories_id];
+    const { rows } = await pool.query(query, values);
+
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create recipe' });
   }
 });
 
-// Update an existing recipe
+// Update a recipe
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, image_path } = req.body;
-    await db.query('UPDATE recipes SET name = ?, description = ?, image_path = ?, updated_at = NOW() WHERE id = ?', [name, description, image_path, id]);
-    const [updatedRecipe] = await db.query('SELECT * FROM recipes WHERE id = ?', [id]);
-    res.json(updatedRecipe);
-  } catch (err) {
-    res.status(400).json({ error: 'Error updating recipe' });
+    const { title, description, image_path, created_at, updated_at, categories_id } = req.body;
+
+    const query = 'UPDATE recipe SET title = $1, description = $2, image_path = $3, updated_at = $4, categories_id = $5 WHERE id = $6 RETURNING *';
+    const values = [title, description, image_path, created_at, updated_at, categories_id];
+
+    const { rows } = await pool.query(query, values);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update recipe' });
   }
 });
 
@@ -106,11 +84,28 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await db.query('DELETE FROM recipes WHERE id = ?', [id]);
-    res.json({ message: 'Recipe deleted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Error deleting recipe' });
+
+    const query = 'DELETE FROM recipe WHERE id = $1 RETURNING *';
+    const values = [id];
+
+    const { rows } = await pool.query(query, values);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete recipe' });
   }
 });
+
+// Function to get a recipe by ID
+async function getRecipeById(id) {
+  const query = 'SELECT * FROM recipe WHERE id = $1';
+  const values = [id];
+  const { rows } = await pool.query(query, values);
+  return rows[0];
+}
 
 export default router;
