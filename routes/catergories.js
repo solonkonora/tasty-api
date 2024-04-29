@@ -3,11 +3,7 @@ import pool from '../db_config/db.js'
 import { config } from 'dotenv';
 config();
 
-
 const router = express.Router();
-
-// Middleware to parse JSON request bodies
-// router.use(express.json())
 
 router.get('/', async (req, res) => {
   try {
