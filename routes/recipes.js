@@ -13,7 +13,7 @@ const router = express.Router();
 // Get all recipes
 router.get('/', async (req, res) => {
   try {
-    const query = 'SELECT * FROM recipe';
+    const query = 'SELECT * FROM recipes';
     const { rows } = await pool.query(query);
     res.json(rows);
   } catch (error) {
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { title, description, image_path, created_at, updated_at, categories_id } = req.body;
+    const { title, description, image_path, created_at, updated_at, category_id } = req.body;
 
     // Upload the image to Cloudinary
     const folderName = 'food-images'; 
@@ -49,12 +49,13 @@ router.post('/', async (req, res) => {
     const imageUrl = uploadedImage.secure_url;
 
     // Save the recipe details, including the image path, to the database
-    const query = 'INSERT INTO recipe (title, description, image_path, created_at, updated_at, categories_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
-    const values = [title, description, imageUrl, created_at, updated_at, categories_id];
+    const query = 'INSERT INTO recipes (title, description, image_path, created_at, updated_at, category_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const values = [title, description, imageUrl, created_at, updated_at, category_id];
     const { rows } = await pool.query(query, values);
 
     res.status(201).json(rows[0]);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Failed to create recipe' });
   }
 });
@@ -63,10 +64,10 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, image_path, created_at, updated_at, categories_id } = req.body;
+    const { title, description, image_path, created_at, updated_at, category_id } = req.body;
 
-    const query = 'UPDATE recipe SET title = $1, description = $2, image_path = $3, updated_at = $4, categories_id = $5 WHERE id = $6 RETURNING *';
-    const values = [title, description, image_path, created_at, updated_at, categories_id];
+    const query = 'UPDATE recipes SET title = $1, description = $2, image_path = $3, updated_at = $4, category_id = $5 WHERE id = $6 RETURNING *';
+    const values = [title, description, image_path, created_at, updated_at, category_id];
 
     const { rows } = await pool.query(query, values);
 
@@ -85,7 +86,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const query = 'DELETE FROM recipe WHERE id = $1 RETURNING *';
+    const query = 'DELETE FROM recipes WHERE id = $1 RETURNING *';
     const values = [id];
 
     const { rows } = await pool.query(query, values);
@@ -102,7 +103,7 @@ router.delete('/:id', async (req, res) => {
 
 // Function to get a recipe by ID
 async function getRecipeById(id) {
-  const query = 'SELECT * FROM recipe WHERE id = $1';
+  const query = 'SELECT * FROM recipes WHERE id = $1';
   const values = [id];
   const { rows } = await pool.query(query, values);
   return rows[0];
