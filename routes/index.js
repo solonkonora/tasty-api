@@ -7,6 +7,7 @@ import recipesRouter from './recipes.js';
 import usersRouter from './users.js';
 import categoriesRouter from './catergories.js';
 import ingredientRouter from './ingredients.js';
+import instructionsRouter from './instructions.js';
 
 
 // Mount the recipe-related and user-related routes
@@ -14,7 +15,7 @@ router.use('/recipes', recipesRouter);
 router.use('/users', usersRouter);
 router.use('/categories', categoriesRouter);
 router.use('/ingredient', ingredientRouter);
-//router.use('/instruction', instructionRouter);
+router.use('/instructions', instructionsRouter);
 
 
 /* GET home page. */

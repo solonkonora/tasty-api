@@ -9,7 +9,7 @@ import usersRouter from './routes/users.js';
 import recipeRouter from './routes/recipes.js';
 import categoriesRouter from './routes/catergories.js';
 import ingredientsRouter from './routes/ingredients.js';
-// import instructionRouter from './routes/instruction.js';
+import instructionsRouter from './routes/instructions.js';
 
 
 const app = express();
@@ -25,7 +25,7 @@ app.use('/users', usersRouter);
 app.use('/recipes', recipeRouter);
 app.use('/categories', categoriesRouter);
 app.use('/ingredients', ingredientsRouter);
-// app.use('/instruction', instructionRouter);
+app.use('/instructions', instructionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
