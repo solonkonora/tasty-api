@@ -16,7 +16,7 @@ router.get('/:recipeId', (req, res) => {
   
       pool.query(query, values, (error, result) => {
         if (error) {
-          console.error('failed to fetch ingredients:', error)
+          //console.error('failed to fetch ingredients:', error)
           res.status(500).json({error: 'Failed to fetch ingredients'});
         } else {
           res.json(result.rows);
@@ -81,7 +81,7 @@ router.delete('/:id', (req, res) => {
       if (rows.length === 0) {
         return res.status(404).json({ error: 'Ingredient not found' });
       } else {
-        res.json(rows[0]);
+        res.status(201).json(rows[0]);
       }
     }
   });
