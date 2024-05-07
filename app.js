@@ -3,6 +3,8 @@ import express, { json, urlencoded} from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
+import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
@@ -14,6 +16,10 @@ import instructionsRouter from './routes/instructions.js';
 
 const app = express();
 
+const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 app.use(logger('dev'));   //to loggin request in dev mode
 app.use(json());
 app.use(express.urlencoded({ extended: true }));  //parse incoming json and url-encoded requst bodies
@@ -22,10 +28,14 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/recipes', recipeRouter);
-app.use('/categories', categoriesRouter);
-app.use('/ingredients', ingredientsRouter);
-app.use('/instructions', instructionsRouter);
+// app.use('/recipes', recipeRouter);
+// app.use('/categories', categoriesRouter);
+// app.use('/ingredients', ingredientsRouter);
+// app.use('/instructions', instructionsRouter);
+app.use('/api/recipes', recipeRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/ingredients', ingredientsRouter);
+app.use('/api/instructions', instructionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

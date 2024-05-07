@@ -18,7 +18,11 @@
     "jade": "^0.29.0",
     "morgan": "~1.9.1",
     "node-fetch": "^3.3.2",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "yaml": "^2.4.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@ljharb/tsconfig": "^0.2.0",
