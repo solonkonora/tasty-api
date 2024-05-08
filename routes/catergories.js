@@ -14,23 +14,7 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
-/**
- * @swagger
- * /categories:
- *   get:
- *     summary: Get all categories
- *     responses:
- *       200:
- *         description: Returns an array of categories
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Category'
- *       500:
- *         description: Failed to fetch categories
- */
+
 router.get('/', async (req, res) => {
   try {
     const query = 'SELECT * FROM categories';
@@ -42,27 +26,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /categories:
- *   post:
- *     summary: Create a category
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/NewCategory'
- *     responses:
- *       201:
- *         description: Returns the created category
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
- *       500:
- *         description: Failed to create category
- */
+
 router.post('/', async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -78,36 +42,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /categories/{id}:
- *   put:
- *     summary: Update a category
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the category
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Category'
- *     responses:
- *       200:
- *         description: Returns the updated category
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
- *       404:
- *         description: Category not found
- *       500:
- *         description: Failed to update category
- */
+
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -128,30 +63,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /categories/{id}:
- *   delete:
- *     summary: Delete a category
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the category
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Returns the deleted category
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
- *       404:
- *         description: Category not found
- *       500:
- *         description: Failed to delete category
- */
+
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;

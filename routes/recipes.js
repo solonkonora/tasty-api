@@ -15,15 +15,7 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
-/**
- * @swagger
- * /recipes:
- *   get:
- *     summary: Get all recipes
- *     responses:
- *       200:
- *         description: Retrieve all recipes
- */
+
 // Get all recipes
 router.get('/', async (req, res) => {
   try {
@@ -35,24 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /recipes/{id}:
- *   get:
- *     summary: Get a recipe by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Retrieve a recipe by ID
- *       404:
- *         description: Recipe not found
- */
+
 // Get a recipe by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -68,36 +43,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /recipes:
- *   post:
- *     summary: Create a new recipe
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               image_path:
- *                 type: string
- *               created_at:
- *                 type: string
- *               updated_at:
- *                 type: string
- *               category_id:
- *                 type: integer
- *     responses:
- *       201:
- *         description: Recipe created successfully
- *       500:
- *         description: Failed to create recipe
- */
+
 // post 
 router.post('/', async (req, res) => {
   try {
@@ -123,53 +69,14 @@ router.post('/', async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /recipes/{id}:
- *   put:
- *     summary: Update a recipe
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               image_path:
- *                 type: string
- *               created_at:
- *                 type: string
- *               updated_at:
- *                 type: string
- *               category_id:
- *                 type: integer
- *     responses:
- *       200:
- *         description: Recipe updated successfully
- *       404:
- *         description: Recipe not found
- *       500:
- *         description: Failed to update recipe
- */
 // Update a recipe
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, image_path, created_at, updated_at, category_id } = req.body;
 
-    const query = 'UPDATE recipes SET title = $1, description = $2, image_path = $3, updated_at = $4, category_id = $5 WHERE id = $6 RETURNING *';
-    const values = [title, description, image_path, created_at, updated_at, category_id];
+    const query = 'UPDATE recipes SET title = $1, description = $2, image_path = $3, created_at = $4, updated_at = $5, category_id = $6 WHERE id = $7 RETURNING *';
+    const values = [title, description, image_path, created_at, updated_at, category_id, id];
 
     const { rows } = await pool.query(query, values);
 
@@ -183,26 +90,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /recipes/{id}:
- *   delete:
- *     summary: Delete a recipe
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Recipe deleted successfully
- *       404:
- *         description: Recipe not found
- *       500:
- *         description: Failed to delete recipe
- */
+
 // Delete a recipe
 router.delete('/:id', async (req, res) => {
   try {

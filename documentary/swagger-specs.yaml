@@ -20,6 +20,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Recipe not found.
 
   /recipes/{recipeId}:
     get:
@@ -54,10 +56,13 @@ paths:
       responses:
         '201':
           description: Recipe created successfully.
+        
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipe'
+        '500':
+          description: Failed to create recipe
 
     put:
       summary: Update an existing recipe
@@ -77,7 +82,11 @@ paths:
               $ref: '#/components/schemas/Recipe'
       responses:
         '200':
-          description: Recipe updated successfully.
+          description: Recipe updated successfully
+        '404':
+          description: Recipe not found
+        '500':
+          description: Failed to update recipe
           content:
             application/json:
               schema:
@@ -96,6 +105,10 @@ paths:
       responses:
         '204':
           description: Recipe deleted successfully.
+        '404':
+          description: Recipe not found.
+        '500':
+          description: Failed to update recipe
 
 components:
   schemas:
@@ -125,16 +138,16 @@ components:
         category_id:
           type: integer
           description: The ID of the category the recipe belongs to, 1,2,3,4 for breakfast, lunch, dinner, and desserts respectively.
-        ingredients:
-          type: array
-          items:
-            $ref: '#/components/schemas/Ingredient'
-          description: The list of ingredients for the recipe.
-        instructions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Instruction'
-          description: The list of instructions for preparing the recipe.
+        # ingredients:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Ingredient'
+        #   description: The list of ingredients for the recipe.
+        # instructions:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Instruction'
+        #   description: The list of instructions for preparing the recipe.
 
     Ingredient:
       type: object

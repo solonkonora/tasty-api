@@ -1,4 +1,3 @@
-//# tasty-api
 # Food Recipe API
 
 This is a backend API for a food recipe application. It provides endpoints for managing recipes and ingredients, and it uses a PostgreSQL database for data storage.
@@ -12,8 +11,8 @@ This is a backend API for a food recipe application. It provides endpoints for m
     Clone the repository:
     bash
 
-git clone https://github.com/your-username/food-recipe-api.git
-cd food-recipe-api
+git clone https://github.com/solonkonora/tasty-api.git
+cd tasty-api
 
 ## Install the dependencies:
 
@@ -44,31 +43,22 @@ Recipes
     PUT /recipes/:id: Update a recipe by ID.
     DELETE /recipes/:id: Delete a recipe by ID.
 
-Ingredients
-
-    GET /ingredients: Get a list of all ingredients.
-    GET /ingredients/:id: Get a specific ingredient by ID.
-    POST /ingredients: Create a new ingredient.
-    PUT /ingredients/:id: Update an ingredient by ID.
-    DELETE /ingredients/:id: Delete an ingredient by ID.
-
 ## Screenshots
 
-Here are some screenshots showcasing the functionality of the Food Recipe API:
+Here are some screenshots showcasing the documentation of the Food Recipe API:
 
-![Screenshot 1][]Description of screenshot 1.
-![Screenshot 2][]Description of screenshot 2.
+![View of the API documented on the Swagger-UI](./images/first.png)
+![View of the Schemas](./images/second.png)
 
 ## Contributing 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request
 
 ## Social Media Handles
 
-Connect with us on social media for the latest updates and announcements:
-
-    Twitter: @your-twitter-handle
-    Instagram: @your-instagram-handle
-    Facebook: facebook.com/your-facebook-page
+Connect with me on social media for the more:
+    GitHub: @solonkonora
+    Twitter: @SolonkoNora
+    whatsapp: +237-652-161-749
 
 ## License
 This project is licensed under the MIT License.

@@ -16,30 +16,7 @@ router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 
-/**
- * @swagger
- * /ingredients/{recipeId}:
- *   get:
- *     summary: Get ingredients for a recipe
- *     parameters:
- *       - in: path
- *         name: recipeId
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Returns an array of ingredients for the recipe
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Ingredient'
- *       500:
- *         description: Failed to fetch ingredients
- */
+
 router.get('/:recipeId', (req, res) => {
   const { recipeId } = req.params;
   const query = 'SELECT * FROM ingredients WHERE recipe_id = $1';
@@ -54,34 +31,7 @@ router.get('/:recipeId', (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /ingredients/{recipeId}:
- *   post:
- *     summary: Create an ingredient for a recipe
- *     parameters:
- *       - in: path
- *         name: recipeId
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/NewIngredient'
- *     responses:
- *       201:
- *         description: Returns the created ingredient
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Ingredient'
- *       500:
- *         description: Failed to create ingredient
- */
+
 router.post('/:recipeId', (req, res) => {
   const { recipeId } = req.params;
   const { name, amount } = req.body;
@@ -98,36 +48,7 @@ router.post('/:recipeId', (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /ingredients/{id}:
- *   put:
- *     summary: Update an ingredient
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the ingredient
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Ingredient'
- *     responses:
- *       200:
- *         description: Returns the updated ingredient
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Ingredient'
- *       404:
- *         description: Ingredient not found
- *       500:
- *         description: Failed to update ingredient
- */
+
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { name, amount } = req.body;
@@ -149,30 +70,7 @@ router.put('/:id', (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /ingredients/{id}:
- *   delete:
- *     summary: Delete an ingredient
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the ingredient
- *         schema:
- *           type: integer
- *     responses:
- *       201:
- *         description: Returns the deleted ingredient
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Ingredient'
- *       404:
- *         description: Ingredient not found
- *       500:
- *         description: Failed to delete ingredient
- */
+
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
