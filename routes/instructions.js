@@ -14,30 +14,7 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
-/**
- * @swagger
- * /instructions/{recipeId}:
- *   get:
- *     summary: Get instructions for a recipe
- *     parameters:
- *       - in: path
- *         name: recipeId
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Returns an array of instructions for the recipe
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Instruction'
- *       500:
- *         description: Failed to fetch instructions
- */
+// Get a recipe
 router.get('/:recipeId', (req, res) => {
   const { recipeId } = req.params;
 
@@ -54,41 +31,7 @@ router.get('/:recipeId', (req, res) => {
 });
 
 
-/**
- * @swagger
- * /instructions/{recipeId}:
- *   post:
- *     summary: Create instructions for a recipe
- *     parameters:
- *       - in: path
- *         name: recipeId
- *         required: true
- *         description: ID of the recipe
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               instructions:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/NewInstruction'
- *     responses:
- *       200:
- *         description: Returns the created instructions
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Instruction'
- *       500:
- *         description: Failed to create instructions
- */
+// create a recipe
 router.post('/:recipeId', (req, res) => {
   const { recipeId } = req.params;
   const instructions = req.body.instructions; // Assuming the request body contains an "instructions" array
@@ -119,36 +62,7 @@ router.post('/:recipeId', (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /instructions/{id}:
- *   put:
- *     summary: Update an instruction
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the instruction
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Instruction'
- *     responses:
- *       200:
- *         description: Returns the updated instruction
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Instruction'
- *       404:
- *         description: Instruction not found
- *       500:
- *         description: Failed to update instruction
- */
+//update a recipe
 router.put('/:id', (req, res) => {
 
   const { id } = req.params;
@@ -171,30 +85,7 @@ router.put('/:id', (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /instructions/{id}:
- *   delete:
- *     summary: Delete an instruction
- *    parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the instruction
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Returns the deleted instruction
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Instruction'
- *       404:
- *         description: Instruction not found
- *       500:
- *         description: Failed to delete instruction
- */
+// delete a recipe
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
