@@ -20,7 +20,7 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-app.use(logger('dev'));   //to loggin request in dev mode
+// app.use(logger('dev'));   //to loggin request in dev mode
 app.use(json());
 app.use(express.urlencoded({ extended: true }));  //parse incoming json and url-encoded requst bodies
 app.use(cookieParser());
