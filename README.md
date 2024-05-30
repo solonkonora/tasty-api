@@ -2,32 +2,55 @@
 
 This is a backend API for a food recipe application. It provides endpoints for managing recipes and ingredients, and it uses a PostgreSQL database for data storage.
 ## Requirements
-
-    Node.js (v12 or above)
+    Node.js (v18 or above)
     PostgreSQL database
 
 ## Installation
 
-    Clone the repository:
-    bash
+Clone the repository:https://github.com/solonkonora/tasty-api.git
 
-git clone https://github.com/solonkonora/tasty-api.git
 cd tasty-api
 
 ## Install the dependencies:
 
 npm install
 
-Set up the PostgreSQL database:
+## Setting up the PostgreSQL database:
 
-    Create a new PostgreSQL database.
-    Update the database connection credentials in the .env file.
+Create a new PostgreSQL database:
 
+    Open your PostgreSQL client (e.g., pgAdmin, psql, or any other tool of your choice).
+    Create a new database for your application. You can use a command like CREATE DATABASE your_database_name;.
+
+Update the database connection credentials:
+
+    In the root of your project, locate the env.example file.
+    Open the env.example file and update the following environment variables with the appropriate values for your PostgreSQL database:
+
+    DB_HOST=your_database_host
+    DB_PORT=your_database_port
+    DB_NAME=your_database_name
+    DB_USER=your_database_username
+    DB_PASSWORD=your_database_password
+
+    Save the changes to the env.example file.
+
+Rename the env.example file:
+
+    Rename the env.example file to .env. This file will be used to store your environment variables and should not be committed to your version control system.
+
+Install the required dependencies:
+
+    If you haven't already, install the necessary dependencies for your Express.js application, including the PostgreSQL client library (e.g. pg ).
+
+Configure the database connection:
+
+    In your application's main file (app.js ), import the necessary modules and set up the database connection using the environment variables from the .env file.
+    Ensure that your application can successfully connect to the PostgreSQL database.
 
 Start the server:
 
-    Terminal
-    npm run dev
+    Terminal: npm run dev
 
 The API server will start running on http://localhost:3000.
 
