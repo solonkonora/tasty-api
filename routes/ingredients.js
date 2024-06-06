@@ -17,22 +17,23 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 
 
-router.get('/:recipeId', (req, res) => {
+router.get('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
   const query = 'SELECT * FROM ingredients WHERE recipe_id = $1';
   const values = [recipeId];
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to fetch ingredients' });
-    } else {
+      next(error)
+      return
+        } else {
       res.json(result.rows);
     }
   });
 });
 
 
-router.post('/:recipeId', (req, res) => {
+router.post('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
   const { name, amount } = req.body;
 
@@ -41,15 +42,16 @@ router.post('/:recipeId', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to create ingredient' });
-    } else {
+      next(error)
+      return
+        } else {
       res.status(201).json(result.rows[0]);
     }
   });
 });
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const { name, amount } = req.body;
 
@@ -58,8 +60,9 @@ router.put('/:id', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to update ingredient' });
-    } else {
+      next(error)
+      return
+        } else {
       const rows = result.rows;
       if (rows.length === 0) {
         return res.status(404).json({ error: 'Ingredient not found' });
@@ -71,7 +74,7 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
 
   const query = 'DELETE FROM ingredients WHERE id = $1 RETURNING *';
@@ -79,8 +82,9 @@ router.delete('/:id', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to delete ingredient' });
-    } else {
+      next(error)
+      return
+        } else {
       const rows = result.rows;
       if (rows.length === 0) {
         return res.status(404).json({ error: 'Ingredient not found' });

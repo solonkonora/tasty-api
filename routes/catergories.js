@@ -90,13 +90,13 @@ router.get('/', (req, res, next) => {
       next(error)
       return
     } else {
-      res.send({ data : result.rows});
+      res.send({ data: result.rows });
     }
   });
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
   const { name, description } = req.body;
 
   const query = 'INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *';
@@ -104,7 +104,8 @@ router.post('/', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to create category' });
+      next(error)
+      return
     } else {
       res.status(201).json(result.rows[0]);
     }
@@ -112,7 +113,7 @@ router.post('/', (req, res) => {
 });
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const { name, description } = req.body;
 
@@ -121,7 +122,8 @@ router.put('/:id', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to update category' });
+      next(error)
+      return
     } else {
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Category not found' });
@@ -133,7 +135,7 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
 
   const query = 'DELETE FROM categories WHERE id = $1 RETURNING *';
@@ -141,7 +143,8 @@ router.delete('/:id', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to delete category' });
+      next(error)
+      return
     } else {
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Category not found' });
