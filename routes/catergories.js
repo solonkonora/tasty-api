@@ -83,9 +83,9 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 //   }
 // });
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   const query = 'SELECT * FROM categories';
-  pool.query(query, (error, result, next) => {
+  pool.query(query, (error, result) => {
     if (error) {
       next(error)
       return
