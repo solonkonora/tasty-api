@@ -10,6 +10,7 @@ import recipeRouter from './routes/recipes.js';
 import categoriesRouter from './routes/catergories.js';
 import ingredientsRouter from './routes/ingredients.js';
 import instructionsRouter from './routes/instructions.js';
+import indexRoute from "./routes/index.js"
 
 
 const app = express();
@@ -24,15 +25,12 @@ app.use(express.urlencoded({ extended: true }));  //parse incoming json and url-
 app.use(cookieParser());
 
 
-app.use('/recipes', recipeRouter);
-app.use('/categories', categoriesRouter);
-app.use('/ingredients', ingredientsRouter);
-app.use('/instructions', instructionsRouter);
 
-// app.use('/api/recipes', recipeRouter);
-// app.use('/api/categories', categoriesRouter);
-// app.use('/api/ingredients', ingredientsRouter);
-// app.use('/api/instructions', instructionsRouter);
+app.use("/", indexRoute)
+app.use('/api/recipes', recipeRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/ingredients', ingredientsRouter);
+app.use('/api/instructions', instructionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
