@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     const { rows } = await pool.query(query);
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve recipes' });
+    res.status(500).json({ error });
   }
 });
 

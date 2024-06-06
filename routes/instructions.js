@@ -15,7 +15,7 @@ router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 // Get a recipe
-router.get('/:recipeId', (req, res) => {
+router.get('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
 
   const query = 'SELECT * FROM instructions WHERE recipe_id = $1';
@@ -23,8 +23,9 @@ router.get('/:recipeId', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to fetch instructions' });
-    } else {
+      next(error)
+      return
+        } else {
       res.status(200).json(result.rows);
     }
   });
@@ -63,7 +64,7 @@ router.post('/:recipeId', (req, res) => {
 });
 
 //update a recipe
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
 
   const { id } = req.params;
   const { step, description } = req.body;
@@ -73,8 +74,9 @@ router.put('/:id', (req, res) => {
 
   pool.query(query, values, (error, result) => {
     if (error) {
-      res.status(500).json({ error: 'Failed to update instruction' });
-    } else {
+      next(error)
+      return
+        } else {
       const rows = result.rows;
       if (rows.length === 0) {
         return res.status(404).json({ error: 'Instruction not found' });

@@ -15,26 +15,11 @@ const pool = new Pool({
   dialect: 'postgres',
 });
 
+//handle connection error
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
 });
 
-// app.get('/', async (req, res) => {
-//   try {
-//     // Test the database connection
-//     await pool.query('SELECT 1');
-//     res.send('Database connection successful!');
-//     console.log('Database connection successful');
-//   } catch (err) {
-//     console.error('Error connecting to the database:', err);
-//     res.status(500).send('Error connecting to the database: ' + err.message);
-//   }
-// });
-
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
 
 export default pool;
