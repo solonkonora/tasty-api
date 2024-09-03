@@ -54,7 +54,7 @@ Start the server:
 
 The API server will start running on http://localhost:3000.
 
-## API Documentation
+## API Documentation using swagger(openAI)
 
 The API documentation is available at /api-docs endpoint. It provides detailed information about the available endpoints, request/response structures, and example usage.
 Endpoints
@@ -65,6 +65,12 @@ Recipes
     POST /recipes: Create a new recipe.
     PUT /recipes/:id: Update a recipe by ID.
     DELETE /recipes/:id: Delete a recipe by ID.
+
+## Commands to retrieve and see data in db
+    localhost:3000/api/recipes; Get all recipes.
+    localhost:3000/api/categories; to see the various categories of meals available
+    localhost:3000/api/ingredients/recipe-id: Get ingredients for a specific recipe by ID.
+    localhost:3000/api/instructions/recipe-id: Get instructions, step by step on how to make a specific recipe by ID.
 
 ## Screenshots
 
