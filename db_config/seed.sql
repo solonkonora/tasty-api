@@ -1,4 +1,4 @@
--- Seed data for Cameroonian Food Recipe API
+      -- Seed data for Cameroonian Food Recipe API
 -- Traditional and authentic Cameroonian delicacies
 
 -- Insert meal categories
@@ -181,6 +181,7 @@ INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
 (6, 'Eru leaves (Okok)', '1', 'lb, finely shredded'),
 (6, 'Waterleaf (or spinach)', '1', 'lb, chopped'),
 (6, 'Smoked fish', '2', 'pieces'),
+(6, 'Beef', '2', 'pieces'),
 (6, 'Stockfish', '1', 'piece, soaked'),
 (6, 'Crayfish', '1/2', 'cup, ground'),
 (6, 'Palm oil', '1/2', 'cup'),
@@ -193,16 +194,16 @@ ON CONFLICT DO NOTHING;
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (6, 1, 'Clean and finely shred the eru leaves (they should be hair-thin strips)'),
 (6, 2, 'Wash and chop the waterleaf, set aside'),
-(6, 3, 'In a pot, heat palm oil over medium heat'),
+(6, 3, 'In a pot, boil the waterleaf over medium heat'),
 (6, 4, 'Add shredded eru leaves to the hot palm oil and stir for 5 minutes'),
 (6, 5, 'Add ground crayfish, pepper, Maggi cubes, and salt, stir well'),
-(6, 6, 'Add the smoked fish and soaked stockfish, breaking them into smaller pieces'),
-(6, 7, 'Add water gradually while stirring to prevent the eru from clumping'),
-(6, 8, 'Add the chopped waterleaf and mix thoroughly'),
-(6, 9, 'Cover and simmer on low heat for 15-20 minutes, stirring occasionally'),
-(6, 10, 'The dish is ready when the vegetables are soft and the sauce is thick'),
-(6, 11, 'Serve hot with fufu, garri, or boiled plantains'),
-(6, 12, 'Cultural note: Eru is a traditional dish of the Bayangi people in the Southwest region. It is a symbol of unity and is often prepared for communal gatherings')
+(6, 6, 'Add the smoked fish and soaked stockfish, boiled beef of desired quantity breaking them into smaller pieces'),
+(6, 7, 'Add palm oil gradually while stirring to prevent the eru from clumping'),
+(6, 8, 'Cover and simmer on low heat for 15-20 minutes, stirring occasionally'),
+(6, , 'The dish is ready when the vegetables are soft and the sauce is thick'),
+(6, 10, 'Serve hot with fufu, garri, or boiled plantains'),
+(6, 11, 'Cultural note: Eru is a traditional dish of the Bayangi people in the Southwest region. It is a symbol of unity and is often prepared for communal gatherings')
+(6, 12, 'Add the chopped waterleaf and mix thoroughly'),
 ON CONFLICT DO NOTHING;
 
 -- Recipe 7: Kati Kati (Grilled Chicken)
@@ -214,11 +215,10 @@ INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
 (7, 'Fresh pepper', '3', 'pieces, blended'),
 (7, 'Vegetable oil', '1/4', 'cup'),
 (7, 'Maggi cubes', '3', 'cubes'),
-(7, 'Black pepper', '1', 'teaspoon'),
 (7, 'Paprika', '1', 'tablespoon'),
 (7, 'Salt', '2', 'teaspoons'),
 (7, 'Tomatoes', '4', 'large, diced (for sauce)'),
-(7, 'Ripe plantains', '3', 'large (for frying)')
+(7, 'Corn flour', '3', 'a few cups (for cooking)')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
@@ -230,8 +230,8 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (7, 6, 'While chicken is grilling, prepare the pepper sauce: sauté remaining onions in oil'),
 (7, 7, 'Add diced tomatoes and fresh pepper to the pan, cook until sauce thickens (about 15 minutes)'),
 (7, 8, 'Season sauce with salt and Maggi cube'),
-(7, 9, 'Peel and slice plantains, fry in hot oil until golden brown'),
-(7, 10, 'Serve grilled chicken with fried plantains and spicy tomato sauce on the side'),
+(7, 9, 'Cook corn flour in a few cups of water until thickened'),
+(7, 10, 'Serve grilled chicken with the cooked corn flour and spicy tomato sauce on the side'),
 (7, 11, 'Cultural note: Kati Kati is a popular dish at Cameroonian restaurants and open-air grills (makolo) especially in urban areas. The name comes from the crackling sound of chicken on the grill')
 ON CONFLICT DO NOTHING;
 
@@ -244,7 +244,7 @@ INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
 (8, 'Tripe (cow leg)', '1/2', 'lb'),
 (8, 'Smoked fish', '2', 'pieces'),
 (8, 'Crayfish', '1/2', 'cup, ground'),
-(8, 'Country onions (njansang)', '3', 'tablespoons, ground'),
+(8, 'achu soup spice mix', '3', 'tablespoons, ground'),
 (8, 'Basil leaves', '1', 'cup, chopped'),
 (8, 'Maggi cubes', '3', 'cubes'),
 (8, 'Salt', '2', 'teaspoons'),
@@ -257,7 +257,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (8, 3, 'In a large pot, heat palm oil until very hot'),
 (8, 4, 'Carefully add the limestone water to the hot palm oil (it will bubble vigorously), stirring constantly'),
 (8, 5, 'The mixture will turn bright yellow - this is your achu soup base'),
-(8, 6, 'Add ground crayfish, njansang, and remaining water, stir well'),
+(8, 6, 'Add ground crayfish, achu soup spice mix, and remaining water, stir well'),
 (8, 7, 'Add the cooked meat, tripe, and smoked fish to the yellow soup'),
 (8, 8, 'Season with Maggi cubes and salt to taste'),
 (8, 9, 'Add chopped basil leaves and simmer for 10 minutes'),
