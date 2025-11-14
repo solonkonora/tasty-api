@@ -14,11 +14,11 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
-// Get a recipe
+// Get instructions for a recipe
 router.get('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
 
-  const query = 'SELECT * FROM instructions WHERE recipe_id = $1';
+  const query = 'SELECT * FROM instructions WHERE recipe_id = $1 ORDER BY step_number ASC';
   const values = [recipeId];
 
   pool.query(query, values, (error, result) => {
@@ -32,45 +32,42 @@ router.get('/:recipeId', (req, res, next) => {
 });
 
 
-// create a recipe
-router.post('/:recipeId', (req, res) => {
+// Create instructions for a recipe
+router.post('/:recipeId', async (req, res) => {
   const { recipeId } = req.params;
   const instructions = req.body.instructions; // Assuming the request body contains an "instructions" array
 
-  const query = 'INSERT INTO instructions (recipe_id, step, description) VALUES ($1, $2, $3) RETURNING *';
+  if (!instructions || !Array.isArray(instructions)) {
+    return res.status(400).json({ error: 'Instructions array is required' });
+  }
 
-  let completedCount = 0;
-  let results = [];
+  const query = 'INSERT INTO instructions (recipe_id, step_number, description) VALUES ($1, $2, $3) RETURNING *';
 
-  instructions.forEach((instruction) => {
-    const { step, description } = instruction;
-    const values = [recipeId, step, description];
-
-    pool.query(query, values, (error, result) => {
-      completedCount++;
-
-      if (error) {
-        console.error('Error creating instruction:', error);
-        return res.status(500).json({ error: 'Failed to create instructions' });
-      }
-
-      results.push(result.rows[0]);
-
-      if (completedCount === instructions.length) {
-        res.status(200).json(results);
-      }
-    });
-  });
+  try {
+    const results = await Promise.all(
+      instructions.map(async (instruction) => {
+        const { step_number, description } = instruction;
+        const values = [recipeId, step_number, description];
+        const result = await pool.query(query, values);
+        return result.rows[0];
+      })
+    );
+    
+    res.status(201).json(results);
+  } catch (error) {
+    console.error('Error creating instructions:', error);
+    res.status(500).json({ error: 'Failed to create instructions' });
+  }
 });
 
-//update a recipe
+// Update an instruction
 router.put('/:id', (req, res, next) => {
 
   const { id } = req.params;
-  const { step, description } = req.body;
+  const { step_number, description } = req.body;
 
-  const query = 'UPDATE instructions SET steps = $1, description = $2 WHERE id = $3 RETURNING *';
-  const values = [step, description, id];
+  const query = 'UPDATE instructions SET step_number = $1, description = $2 WHERE id = $3 RETURNING *';
+  const values = [step_number, description, id];
 
   pool.query(query, values, (error, result) => {
     if (error) {
@@ -87,7 +84,7 @@ router.put('/:id', (req, res, next) => {
   });
 });
 
-// delete a recipe
+// Delete an instruction
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 

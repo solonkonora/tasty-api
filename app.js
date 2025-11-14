@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import express, { json, urlencoded} from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import cors from 'cors';
 
 import YAML from 'yamljs';
 import swaggerUi from 'swagger-ui-express';
@@ -18,6 +19,8 @@ const app = express();
 const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(logger('dev'));   //to loggin request in dev mode
 app.use(json());

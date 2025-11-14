@@ -62,30 +62,26 @@ async function uploadDirectory(localDir, cloudinaryFolder) {
   }
 }
 
-/**
- * Example usage - Uncomment and modify as needed
- */
+
+// Example usage
+
 async function main() {
   console.log('Cameroonian Recipe Images Uploader');
-  console.log('===================================\n');
 
-  // Example: Upload images from local folders to Cloudinary
-  // Make sure you have these folders with images locally first!
+  // Upload images from local folders to Cloudinary
+  console.log('Starting upload process...\n');
   
-  // await uploadDirectory('./images/breakfast', 'cameroon-recipes/breakfast');
-  // await uploadDirectory('./images/lunch', 'cameroon-recipes/lunch');
-  // await uploadDirectory('./images/dinner', 'cameroon-recipes/dinner');
-  // await uploadDirectory('./images/dessert', 'cameroon-recipes/dessert');
-  // await uploadDirectory('./images/snacks', 'cameroon-recipes/snacks');
+  await uploadDirectory('./images/breakfast', 'cameroon-recipes/breakfast');
+  await uploadDirectory('./images/lunch', 'cameroon-recipes/lunch');
+  await uploadDirectory('./images/dinner', 'cameroon-recipes/dinner');
+  await uploadDirectory('./images/desserts', 'cameroon-recipes/dessert');
+  await uploadDirectory('./images/snacks', 'cameroon-recipes/snacks');
 
-  // Or upload individual images:
-  // await uploadImage('./images/ndole.jpg', 'cameroon-recipes/lunch', 'ndole');
-  // await uploadImage('./images/puff-puff.jpg', 'cameroon-recipes/breakfast', 'puff-puff');
-
-  console.log('\nTo use this script:');
-  console.log('1. Place your images in local folders (e.g., ./images/breakfast/)');
-  console.log('2. Uncomment the upload commands above');
-  console.log('3. Run: node scripts/upload-images.js\n');
+  console.log('\n✓ All images uploaded successfully!');
+  console.log('\nNext steps:');
+  console.log('1. Check the URLs printed above');
+  console.log('2. Run: PGPASSWORD=api psql -h localhost -U apiuser -d foodie -f scripts/update-image-urls.sql');
+  console.log('3. Or manually update the database with the new URLs\n');
 }
 
 main();
