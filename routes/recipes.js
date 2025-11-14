@@ -19,11 +19,11 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 // Get all recipes
 router.get('/', async (req, res) => {
   try {
-    const query = 'SELECT * FROM recipes';
+    const query = 'SELECT * FROM recipes ORDER BY category_id ASC, id ASC';
     const { rows } = await pool.query(query);
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ error: 'Failed to fetch recipes' });
   }
 });
 
@@ -49,7 +49,6 @@ router.post('/', async (req, res) => {
   try {
     const { title, description, image_path, created_at, updated_at, category_id } = req.body;
 
-    // Upload the image to Cloudinary
     const folderName = 'food-images'; 
     const uploadedImage = await uploadImageToFolder(image_path, folderName);
 
@@ -68,8 +67,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-// Update a recipe
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,8 +87,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-
-// Delete a recipe
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,7 +106,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Function to get a recipe by ID
 async function getRecipeById(id) {
   const query = 'SELECT * FROM recipes WHERE id = $1';
   const values = [id];

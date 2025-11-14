@@ -19,7 +19,7 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 router.get('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
-  const query = 'SELECT * FROM ingredients WHERE recipe_id = $1';
+  const query = 'SELECT * FROM ingredients WHERE recipe_id = $1 ORDER BY id ASC';
   const values = [recipeId];
 
   pool.query(query, values, (error, result) => {
@@ -35,10 +35,10 @@ router.get('/:recipeId', (req, res, next) => {
 
 router.post('/:recipeId', (req, res, next) => {
   const { recipeId } = req.params;
-  const { name, amount } = req.body;
+  const { name, quantity, unit } = req.body;
 
-  const query = 'INSERT INTO ingredients (recipe_id, name, amount) VALUES ($1, $2, $3) RETURNING *';
-  const values = [recipeId, name, amount];
+  const query = 'INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES ($1, $2, $3, $4) RETURNING *';
+  const values = [recipeId, name, quantity, unit];
 
   pool.query(query, values, (error, result) => {
     if (error) {
@@ -53,10 +53,10 @@ router.post('/:recipeId', (req, res, next) => {
 
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
-  const { name, amount } = req.body;
+  const { name, quantity, unit } = req.body;
 
-  const query = 'UPDATE ingredients SET name = $1, amount = $2 WHERE id = $3 RETURNING *';
-  const values = [name, amount, id];
+  const query = 'UPDATE ingredients SET name = $1, quantity = $2, unit = $3 WHERE id = $4 RETURNING *';
+  const values = [name, quantity, unit, id];
 
   pool.query(query, values, (error, result) => {
     if (error) {
@@ -89,7 +89,7 @@ router.delete('/:id', (req, res, next) => {
       if (rows.length === 0) {
         return res.status(404).json({ error: 'Ingredient not found' });
       } else {
-        res.status(201).json(rows[0]);
+        res.status(200).json(rows[0]);
       }
     }
   });
