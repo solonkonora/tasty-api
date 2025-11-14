@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Food Recipe API
+  description: API documentation for Food Recipe API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/
+
+paths:
+  /recipes:
+    get:
+      summary: Get a list of recipes
+      description: Retrieve a list of recipes from the database.
+      responses:
+        '200':
+          description: A list of recipes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Recipe not found.
+
+  /recipes/{recipeId}:
+    get:
+      summary: Get a recipe by ID
+      description: Retrieve a recipe from the database by its ID.
+      parameters:
+        - name: recipeId
+          in: path
+          description: The ID of the recipe to retrieve.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The requested recipe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Recipe not found.
+
+    post:
+      summary: Create a new recipe
+      description: Create a new recipe in the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '201':
+          description: Recipe created successfully.
+        
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '500':
+          description: Failed to create recipe
+
+    put:
+      summary: Update an existing recipe
+      description: Update an existing recipe in the database.
+      parameters:
+        - name: recipeId
+          in: path
+          description: The ID of the recipe to update.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '200':
+          description: Recipe updated successfully
+        '404':
+          description: Recipe not found
+        '500':
+          description: Failed to update recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+
+    delete:
+      summary: Delete a recipe
+      description: Delete a recipe from the database.
+      parameters:
+        - name: recipeId
+          in: path
+          description: The ID of the recipe to delete.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Recipe deleted successfully.
+        '404':
+          description: Recipe not found.
+        '500':
+          description: Failed to update recipe
+
+components:
+  schemas:
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the recipe.
+        title:
+          type: string
+          description: The title of the recipe.
+        description:
+          type: string
+          description: The description of the recipe.
+        image_path:
+          type: string
+          description: The path to the image associated with the recipe.
+        created_at:
+          type: string
+          format: date-time
+          description: The timestamp indicating when the recipe was created.
+        updated_at:
+          type: string
+          format: date-time
+          description: The timestamp indicating when the recipe was last updated.
+        category_id:
+          type: integer
+          description: The ID of the category the recipe belongs to, 1,2,3,4 for breakfast, lunch, dinner, and desserts respectively.
+        # ingredients:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Ingredient'
+        #   description: The list of ingredients for the recipe.
+        # instructions:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Instruction'
+        #   description: The list of instructions for preparing the recipe.
+
+    Ingredient:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the ingredient.
+        amount:
+          type: string
+          description: The amount of the ingredient required for the recipe.
+
+    Instruction:
+      type: object
+      properties:
+        step:
+          type: string
+          description: The step number or instruction identifier.
+        description:
+          type: string
+          description: The description of the instruction.
