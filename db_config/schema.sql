@@ -1,5 +1,3 @@
--- Food Recipe API Database Schema
-
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,

@@ -11,6 +11,8 @@ import recipeRouter from './routes/recipes.js';
 import categoriesRouter from './routes/catergories.js';
 import ingredientsRouter from './routes/ingredients.js';
 import instructionsRouter from './routes/instructions.js';
+import authRouter from './routes/auth.js';
+import favoritesRouter from './routes/favorites.js';
 import indexRoute from "./routes/index.js"
 
 
@@ -20,7 +22,10 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Vite default port
+  credentials: true // Allow cookies
+}));
 
 app.use(logger('dev'));   //to loggin request in dev mode
 app.use(json());
@@ -30,6 +35,8 @@ app.use(cookieParser());
 
 
 app.use("/", indexRoute)
+app.use('/api/auth', authRouter);
+app.use('/api/favorites', favoritesRouter);
 app.use('/api/recipes', recipeRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/ingredients', ingredientsRouter);
