@@ -13,41 +13,39 @@ ON CONFLICT DO NOTHING;
 -- Insert Cameroonian recipes
 INSERT INTO recipes (title, description, image_path, category_id) VALUES
 -- Breakfast dishes
-('Puff Puff', 'Sweet, fluffy deep-fried dough balls, a beloved Cameroonian breakfast treat often enjoyed with beans or alone', 'https://example.com/puff-puff.jpg', 1),
-('Accra Banana', 'Spicy banana fritters made from overripe plantains, commonly served with hot pepper sauce', 'https://example.com/accra-banana.jpg', 1),
-('Beans and Plantains', 'Boiled red beans served with fried ripe plantains, a nutritious and filling breakfast', 'https://example.com/beans-plantains.jpg', 1),
-('Boiled Yam with Eggs', 'Soft boiled yam served with scrambled eggs and vegetable sauce', 'https://example.com/yam-eggs.jpg', 1),
+('Puff Puff (Breakfast)', 'Sweet, fluffy deep-fried dough balls, a beloved Cameroonian breakfast treat often enjoyed with beans or alone', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/breakfast/puff-puff.jpg', 1),
+('Accra Banana', 'Spicy banana fritters made from overripe plantains, commonly served with hot pepper sauce', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/breakfast/accra-banana.png', 1),
+('Beans and Plantains', 'Boiled red beans served with fried ripe plantains, a nutritious and filling breakfast', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/breakfast/beans-ripe-plantain.png', 1),
+('Boiled Yam with Eggs', 'Soft boiled yam served with scrambled eggs and vegetable sauce', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/breakfast/yam-egg.png', 1),
 
 -- Lunch dishes
-('Ndolé', 'The national dish of Cameroon - bitter leaves cooked in groundnut paste with meat or fish, served with plantains or rice', 'https://example.com/ndole.jpg', 2),
-('Eru', 'A traditional dish from the Southwest - finely shredded eru leaves cooked with waterleaf, crayfish, and palm oil', 'https://example.com/eru.jpg', 2),
-('Kati Kati', 'Grilled chicken marinated in spices and grilled over charcoal, served with fried plantains and a spicy tomato sauce', 'https://example.com/kati-kati.jpg', 2),
-('Achu Soup', 'A yellow soup made with limestone and palm oil, served with pounded cocoyam, popular in the Northwest region', 'https://example.com/achu.jpg', 2),
-('Jollof Rice', 'The famous one-pot rice dish cooked in a rich tomato and pepper sauce with meat or fish', 'https://example.com/jollof.jpg', 2),
-('Fufu and Eru', 'Pounded cassava served with the traditional eru vegetable soup', 'https://example.com/fufu-eru.jpg', 2),
-('Egusi Soup', 'Ground melon seed soup with vegetables and meat, served with fufu or garri', 'https://example.com/egusi.jpg', 2),
+('Ndolé', 'The national dish of Cameroon - bitter leaves cooked in groundnut paste with meat or fish, served with plantains or rice', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/ndole.jpeg', 2),
+('Eru', 'A traditional dish from the Southwest - finely shredded eru leaves cooked with waterleaf, crayfish, and palm oil', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/eru.jpeg', 2),
+('Kati Kati', 'Grilled chicken marinated in spices and grilled over charcoal, served with fried plantains and a spicy tomato sauce', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/kati-kati.png', 2),
+('Achu Soup', 'A yellow soup made with limestone and palm oil, served with pounded cocoyam, popular in the Northwest region', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/achu.jpg', 2),
+('Jollof Rice', 'The famous one-pot rice dish cooked in a rich tomato and pepper sauce with meat or fish', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/jollof.jpg', 2),
+('Fufu and Eru', 'Pounded cassava served with the traditional eru vegetable soup', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/eru.jpeg', 2),
+('Egusi Soup', 'Ground melon seed soup with vegetables and meat, served with fufu or garri', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/lunch/egusi-soup.png', 2),
 
 -- Dinner dishes
-('Pepper Soup', 'A spicy, aromatic broth with fish or meat, perfect for cool evenings', 'https://example.com/pepper-soup.jpg', 3),
-('Mbanga Soup', 'Palm nut soup with fish and vegetables, served with fufu or rice', 'https://example.com/mbanga.jpg', 3),
-('Okra Soup', 'Slimy okra soup with assorted meat or fish, served with garri or fufu', 'https://example.com/okra-soup.jpg', 3),
+('Pepper Soup', 'A spicy, aromatic broth with fish or meat, perfect for cool evenings', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dinner/pepper-soup.png', 3),
+('Mbanga Soup', 'Palm nut soup with fish and vegetables, served with fufu or rice', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dinner/banga-soup.png', 3),
+('Okra Soup', 'Slimy okra soup with assorted meat or fish, served with garri or fufu', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dinner/okra-soup.png', 3),
 
 -- Desserts
-('Banana Fritters', 'Sweet ripe banana fritters dusted with sugar, a popular dessert', 'https://example.com/banana-fritters.jpg', 4),
-('Coconut Drops', 'Sweet coconut candy made with grated coconut and caramelized sugar', 'https://example.com/coconut-drops.jpg', 4),
-('Chin Chin', 'Crunchy, slightly sweet fried dough snacks, perfect with tea', 'https://example.com/chin-chin.jpg', 4),
+('Banana Fritters', 'Sweet ripe banana fritters dusted with sugar, a popular dessert', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dessert/accra-banana.png', 4),
+('Puff Puff (Dessert)', 'Deep-fried sweet dough balls sold by street vendors', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dessert/puff-puff.jpg', 4),
+('Coconut Drops', 'Sweet coconut candy made with grated coconut and caramelized sugar', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dessert/coconut-drops.png', 4),
+('Chin Chin', 'Crunchy, slightly sweet fried dough snacks, perfect with tea', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/dessert/chin-chin.png', 4),
 
 -- Snacks
-('Soya (Suya)', 'Spicy grilled beef skewers seasoned with groundnut spice mix, a popular street food', 'https://example.com/soya.jpg', 5),
-('Beignets (Puff Puff)', 'Deep-fried sweet dough balls sold by street vendors', 'https://example.com/beignets.jpg', 5),
-('Roasted Corn and Pears', 'Grilled corn served with roasted African pear (safou), a classic street food combination', 'https://example.com/corn-pears.jpg', 5),
-('Plantain Chips', 'Thinly sliced and fried plantain chips, a crunchy snack', 'https://example.com/plantain-chips.jpg', 5),
-('Kilishi', 'Spicy dried meat similar to jerky, originating from Northern Cameroon', 'https://example.com/kilishi.jpg', 5)
-ON CONFLICT DO NOTHING;
+('Soya (Suya)', 'Spicy grilled beef skewers seasoned with groundnut spice mix, a popular street food', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/snacks/suya.png', 5),
+('Puff Puff (Snack)', 'Deep-fried sweet dough balls sold by street vendors', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/snacks/puff-puff.jpg', 5),
+('Roasted Corn and Pears', 'Grilled corn served with roasted African pear (safou), a classic street food combination', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/snacks/roasted-corn.png', 5),
+('Plantain Chips', 'Thinly sliced and fried plantain chips, a crunchy snack', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/snacks/chips.png', 5),
+('Kilishi', 'Spicy dried meat similar to jerky, originating from Northern Cameroon', 'https://res.cloudinary.com/drs0ewxd1/image/upload/v1/cameroon-recipes/snacks/kilishi.png', 5);
 
--- ========================================
 -- BREAKFAST RECIPES - Ingredients & Instructions
--- ========================================
 
 -- Recipe 1: Puff Puff
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
@@ -142,9 +140,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (4, 10, 'Cultural note: Yam is a staple food in Cameroon and is often served at celebrations. This breakfast is particularly popular in the Western and Northwest regions')
 ON CONFLICT DO NOTHING;
 
--- ========================================
 -- LUNCH RECIPES - Ingredients & Instructions
--- ========================================
 
 -- Recipe 5: Ndolé (National Dish)
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
@@ -200,10 +196,10 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (6, 6, 'Add the smoked fish and soaked stockfish, boiled beef of desired quantity breaking them into smaller pieces'),
 (6, 7, 'Add palm oil gradually while stirring to prevent the eru from clumping'),
 (6, 8, 'Cover and simmer on low heat for 15-20 minutes, stirring occasionally'),
-(6, , 'The dish is ready when the vegetables are soft and the sauce is thick'),
+(6, 9, 'The dish is ready when the vegetables are soft and the sauce is thick'),
 (6, 10, 'Serve hot with fufu, garri, or boiled plantains'),
-(6, 11, 'Cultural note: Eru is a traditional dish of the Bayangi people in the Southwest region. It is a symbol of unity and is often prepared for communal gatherings')
-(6, 12, 'Add the chopped waterleaf and mix thoroughly'),
+(6, 11, 'Cultural note: Eru is a traditional dish of the Bayangi people in the Southwest region. It is a symbol of unity and is often prepared for communal gatherings'),
+(6, 12, 'Add the chopped waterleaf and mix thoroughly')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 7: Kati Kati (Grilled Chicken)
@@ -320,9 +316,17 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (10, 1, 'Peel cassava and cut into chunks, boil until very soft (about 30 minutes)'),
 (10, 2, 'Drain cassava and pound in a mortar or use a food processor until smooth, stretchy, and sticky'),
 (10, 3, 'Knead the pounded cassava with wet hands until elastic, form into balls'),
-(10, 4, 'Prepare eru following recipe #6 instructions'),
-(10, 5, 'Serve fufu balls with eru soup on the side'),
-(10, 6, 'Cultural note: Fufu is typically eaten by pinching off a small portion, making an indentation with the thumb, and using it to scoop up the soup. It is considered disrespectful to chew fufu - it should be swallowed')
+(10, 4, 'Clean and finely shred the eru leaves (they should be hair-thin strips)'),
+(10, 5, 'Wash and chop the waterleaf, set aside'),
+(10, 6, 'In a pot, boil the waterleaf over medium heat'),
+(10, 7, 'Add shredded eru leaves to the hot palm oil and stir for 5 minutes'),
+(10, 8, 'Add ground crayfish, pepper, Maggi cubes, and salt, stir well'),
+(10, 9, 'Add the smoked fish and soaked stockfish, boiled beef of desired quantity breaking them into smaller pieces'),
+(10, 10, 'Add palm oil gradually while stirring to prevent the eru from clumping'),
+(10, 11, 'Cover and simmer on low heat for 15-20 minutes, stirring occasionally'),
+(10, 12, 'The dish is ready when the vegetables are soft and the sauce is thick'),
+(10, 13, 'Serve fufu balls with eru soup on the side'),
+(10, 14, 'Cultural note: Fufu is typically eaten by pinching off a small portion, making an indentation with the thumb, and using it to scoop up the soup. It is considered disrespectful to chew fufu - it should be swallowed')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 11: Egusi Soup
@@ -354,9 +358,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (11, 11, 'Cultural note: Egusi soup is popular throughout Cameroon and is often served at gatherings. The melon seeds provide protein and a unique nutty flavor')
 ON CONFLICT DO NOTHING;
 
--- ========================================
 -- DINNER RECIPES - Ingredients & Instructions
--- ========================================
 
 -- Recipe 12: Pepper Soup
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
@@ -439,9 +441,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (14, 10, 'Cultural note: Okra soup is popular across Cameroon and is valued for its health benefits. The slimy texture aids digestion')
 ON CONFLICT DO NOTHING;
 
--- ========================================
 -- DESSERT RECIPES - Ingredients & Instructions
--- ========================================
 
 -- Recipe 15: Banana Fritters
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
@@ -519,9 +519,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (17, 11, 'Cultural note: Chin chin is a crunchy snack served at parties, weddings, and festive occasions. It pairs perfectly with soft drinks or tea and can last for weeks when properly stored')
 ON CONFLICT DO NOTHING;
 
--- ========================================
 -- SNACK RECIPES - Ingredients & Instructions
--- ========================================
 
 -- Recipe 18: Soya (Suya)
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
