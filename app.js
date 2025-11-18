@@ -13,7 +13,8 @@ import ingredientsRouter from './routes/ingredients.js';
 import instructionsRouter from './routes/instructions.js';
 import authRouter from './routes/auth.js';
 import favoritesRouter from './routes/favorites.js';
-import indexRoute from "./routes/index.js"
+import indexRoute from "./routes/index.js";
+import passport from './config/passport.js';
 
 
 const app = express();
@@ -32,6 +33,8 @@ app.use(json());
 app.use(express.urlencoded({ extended: true }));  //parse incoming json and url-encoded requst bodies
 app.use(cookieParser());
 
+// Initialize Passport
+app.use(passport.initialize());
 
 
 app.use("/", indexRoute)

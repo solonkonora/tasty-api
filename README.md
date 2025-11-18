@@ -1,9 +1,19 @@
 # Food Recipe API
 
 This is a backend API for a food recipe application. It provides endpoints for managing recipes and ingredients, and it uses a PostgreSQL database for data storage.
+
+## Features
+- 🍳 Recipe management (CRUD operations)
+- 👤 User authentication (email/password + Google OAuth)
+- ❤️ Favorites system
+- 📝 Ingredients and step-by-step instructions
+- 🔐 JWT-based authentication with httpOnly cookies
+- 🌐 Google Sign-In integration
+
 ## Requirements
-    Node.js (v18 or above)
-    PostgreSQL database
+- Node.js (v18 or above)
+- PostgreSQL database
+- Google OAuth credentials (for Google Sign-In)
 
 ## Installation
 
@@ -54,17 +64,58 @@ Start the server:
 
 The API server will start running on http://localhost:3000.
 
+## Google OAuth Setup (Optional)
+
+To enable Google Sign-In functionality:
+
+1. **Quick Setup**: See `QUICK_START_GOOGLE_AUTH.md` for a fast testing guide
+2. **Full Setup**: See `GOOGLE_OAUTH_SETUP.md` for complete production-ready setup
+
+**Quick steps:**
+- Get OAuth credentials from [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+- Add to your `.env`:
+  ```bash
+  GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+  GOOGLE_CLIENT_SECRET=your-client-secret
+  GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+  ```
+- Run database migration: `PGPASSWORD=api psql -h localhost -U apiuser -d foodie -f db_config/add-google-auth.sql`
+- Restart server
+
+Without these credentials, the app will still work with email/password authentication.
+
 ## API Documentation using swagger(openAI)
 
 The API documentation is available at /api-docs endpoint. It provides detailed information about the available endpoints, request/response structures, and example usage.
-Endpoints
-Recipes
 
-    GET /recipes: Get a list of all recipes.
-    GET /recipes/:id: Get a specific recipe by ID.
-    POST /recipes: Create a new recipe.
-    PUT /recipes/:id: Update a recipe by ID.
-    DELETE /recipes/:id: Delete a recipe by ID.
+## Endpoints
+
+### Authentication
+- `POST /api/auth/signup`: Create a new user account
+- `POST /api/auth/login`: Login with email and password
+- `POST /api/auth/logout`: Logout current user
+- `GET /api/auth/me`: Get current user info
+- `GET /api/auth/google`: Initiate Google OAuth flow
+- `GET /api/auth/google/callback`: Google OAuth callback (automatic)
+
+### Recipes
+- `GET /api/recipes`: Get all recipes
+- `GET /api/recipes/:id`: Get a specific recipe by ID
+- `POST /api/recipes`: Create a new recipe (authenticated)
+- `PUT /api/recipes/:id`: Update a recipe (owner only)
+- `DELETE /api/recipes/:id`: Delete a recipe (owner only)
+
+### Categories
+- `GET /api/categories`: Get all meal categories
+
+### Ingredients & Instructions
+- `GET /api/ingredients/:recipeId`: Get ingredients for a recipe
+- `GET /api/instructions/:recipeId`: Get step-by-step instructions
+
+### Favorites
+- `GET /api/favorites`: Get user's favorite recipes
+- `POST /api/favorites`: Add a recipe to favorites
+- `DELETE /api/favorites/:recipeId`: Remove from favorites
 
 ## Commands to retrieve and see data in db
     localhost:3000/api/recipes; Get all recipes.

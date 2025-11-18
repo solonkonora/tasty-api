@@ -2,9 +2,11 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import pool from '../db_config/db.js';
 import { generateToken } from '../middleware/auth.js';
+import passport from '../config/passport.js';
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 
 router.post('/signup', async (req, res) => {
@@ -162,5 +164,55 @@ router.get('/me', async (req, res) => {
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 });
+
+// ========================================
+// Google OAuth Routes
+// ========================================
+
+/**
+ * Initiates Google OAuth flow
+ * Frontend redirects to this endpoint
+ */
+router.get('/google',
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    session: false // We use JWT, not sessions
+  })
+);
+
+/**
+ * Google OAuth callback
+ * Google redirects here after user authorizes
+ */
+router.get('/google/callback',
+  passport.authenticate('google', { 
+    session: false,
+    failureRedirect: `${FRONTEND_URL}/login?error=google_auth_failed`
+  }),
+  (req, res) => {
+    try {
+      // User authenticated successfully via passport
+      const user = req.user;
+
+      // Generate JWT token (same as email/password login)
+      const token = generateToken(user.id, user.email);
+
+      // Set httpOnly cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      });
+
+      // Redirect to frontend with success
+      // Frontend will call /auth/me to get user info
+      res.redirect(`${FRONTEND_URL}/?auth=success`);
+    } catch (error) {
+      console.error('Google callback error:', error);
+      res.redirect(`${FRONTEND_URL}/login?error=callback_failed`);
+    }
+  }
+);
 
 export default router;
