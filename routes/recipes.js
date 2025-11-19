@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import { createCloudinaryFolder, setupImageFolders, uploadImageToFolder } from '../db_config/cloudinary_config.js';
 import pool from '../db_config/db.js'
 import { config } from 'dotenv';
@@ -10,12 +11,51 @@ config();
 
 const router = express.Router();
 
+// Configure multer for memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
+
 const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 
 // mounting the Swagger UI middleware:
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
+// Upload image endpoint
+router.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    // Convert buffer to base64 data URL
+    const b64 = Buffer.from(req.file.buffer).toString('base64');
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+    // Upload to Cloudinary - user uploads go to main cameroon-recipes folder
+    const folderName = 'cameroon-recipes';
+    const uploadedImage = await uploadImageToFolder(dataURI, folderName);
+
+    res.json({ 
+      success: true, 
+      url: uploadedImage.secure_url,
+      publicId: uploadedImage.public_id
+    });
+  } catch (error) {
+    console.error('Image upload error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
 
 // Get all recipes (all public recipes visible to everyone)
 router.get('/', authenticateToken, async (req, res) => {
@@ -60,7 +100,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     // Only upload to Cloudinary if image_path looks like a local file or data URL
     if (image_path && (image_path.startsWith('data:') || image_path.startsWith('file:'))) {
-      const folderName = 'food-images'; 
+      const folderName = 'cameroon-recipes'; 
       const uploadedImage = await uploadImageToFolder(image_path, folderName);
       imageUrl = uploadedImage.secure_url;
     }
