@@ -51,14 +51,16 @@ app.use(cookieParser());
 // Initialize Passport
 app.use(passport.initialize());
 
-
-app.use("/", indexRoute)
+// mount API routes BEFORE the index route
 app.use('/api/auth', authRouter);
 app.use('/api/favorites', favoritesRouter);
 app.use('/api/recipes', recipeRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/ingredients', ingredientsRouter);
 app.use('/api/instructions', instructionsRouter);
+
+// mount index route last (for homepage only)
+app.use("/", indexRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
