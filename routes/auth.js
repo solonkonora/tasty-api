@@ -225,7 +225,7 @@ router.get('/google/callback',
  */
 router.get('/facebook',
   passport.authenticate('facebook', { 
-    scope: ['email'],
+    scope: ['public_profile'], // Only request public_profile (no email required)
     session: false // We use JWT, not sessions
   })
 );

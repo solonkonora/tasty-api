@@ -81,43 +81,36 @@ passport.use(
       clientID: FACEBOOK_APP_ID,
       clientSecret: FACEBOOK_APP_SECRET,
       callbackURL: FACEBOOK_CALLBACK_URL,
-      profileFields: ['id', 'displayName', 'emails', 'name'],
+      profileFields: ['id', 'displayName', 'name'],
+      // Note: 'email' scope requires Facebook App Review
+      // For now, we'll use facebook_id as the unique identifier
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         // Extract user info from Facebook profile
-        const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-        const full_name = profile.displayName;
+        const full_name = profile.displayName || `${profile.name?.givenName || ''} ${profile.name?.familyName || ''}`.trim();
         const facebook_id = profile.id;
 
-        if (!email) {
-          return done(new Error('No email provided by Facebook'), null);
-        }
+        // Generate a placeholder email using facebook_id
+        // Users can update their email later if needed
+        const placeholder_email = `facebook_${facebook_id}@placeholder.local`;
 
-        // Check if user exists
+        // Check if user exists by facebook_id
         let result = await pool.query(
-          'SELECT id, email, full_name, facebook_id, created_at FROM users WHERE email = $1',
-          [email.toLowerCase()]
+          'SELECT id, email, full_name, facebook_id, created_at FROM users WHERE facebook_id = $1',
+          [facebook_id]
         );
 
         let user;
 
         if (result.rows.length > 0) {
-          // User exists - update facebook_id if not set
+          // User exists
           user = result.rows[0];
-          
-          if (!user.facebook_id) {
-            await pool.query(
-              'UPDATE users SET facebook_id = $1 WHERE id = $2',
-              [facebook_id, user.id]
-            );
-            user.facebook_id = facebook_id;
-          }
         } else {
           // Create new user (no password needed for Facebook auth)
           result = await pool.query(
             'INSERT INTO users (email, full_name, facebook_id, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, facebook_id, created_at',
-            [email.toLowerCase(), full_name, facebook_id, ''] // Empty password_hash for Facebook-only accounts
+            [placeholder_email, full_name, facebook_id, ''] // Empty password_hash for Facebook-only accounts
           );
           user = result.rows[0];
         }
