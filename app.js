@@ -23,8 +23,23 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Enable CORS for all routes
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://food-recipe-app-eosin.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean); // remove undefined values
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite default port
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true // Allow cookies
 }));
 
