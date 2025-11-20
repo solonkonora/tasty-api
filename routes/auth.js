@@ -215,4 +215,54 @@ router.get('/google/callback',
   }
 );
 
+// ========================================
+// Facebook OAuth Routes
+// ========================================
+
+/**
+ * Initiates Facebook OAuth flow
+ * Frontend redirects to this endpoint
+ */
+router.get('/facebook',
+  passport.authenticate('facebook', { 
+    scope: ['email'],
+    session: false // We use JWT, not sessions
+  })
+);
+
+/**
+ * Facebook OAuth callback
+ * Facebook redirects here after user authorizes
+ */
+router.get('/facebook/callback',
+  passport.authenticate('facebook', { 
+    session: false,
+    failureRedirect: `${FRONTEND_URL}/login?error=facebook_auth_failed`
+  }),
+  (req, res) => {
+    try {
+      // User authenticated successfully via passport
+      const user = req.user;
+
+      // Generate JWT token (same as email/password login)
+      const token = generateToken(user.id, user.email);
+
+      // Set httpOnly cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      });
+
+      // Redirect to frontend with success
+      // Frontend will call /auth/me to get user info
+      res.redirect(`${FRONTEND_URL}/?auth=success`);
+    } catch (error) {
+      console.error('Facebook callback error:', error);
+      res.redirect(`${FRONTEND_URL}/login?error=callback_failed`);
+    }
+  }
+);
+
 export default router;
