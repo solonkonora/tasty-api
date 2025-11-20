@@ -8,6 +8,9 @@ const app = express();
 
 const { Pool } = pkg;
 
+// Log which connection method is being used
+console.log('Database connection mode:', process.env.DATABASE_URL ? 'DATABASE_URL' : 'Individual variables');
+
 // Use DATABASE_URL if available (production), otherwise use individual variables (development)
 const pool = process.env.DATABASE_URL
   ? new Pool({
@@ -23,7 +26,7 @@ const pool = process.env.DATABASE_URL
       database: process.env.DB_DATABASE,
       host: process.env.DB_HOST,
       port: process.env.DB_PORT || 5432,
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      ssl: { rejectUnauthorized: false }, // Always use SSL in production
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -39,8 +42,13 @@ pool.on('error', (err) => {
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('❌ Database connection failed:', err.message);
+    console.error('Error details:', {
+      code: err.code,
+      host: process.env.DB_HOST || 'from DATABASE_URL',
+      database: process.env.DB_DATABASE || 'from DATABASE_URL'
+    });
   } else {
-    console.log('✅ Database connected successfully');
+    console.log('✅ Database connected successfully at', res.rows[0].now);
   }
 });
 
