@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import pool from '../db_config/db.js';
+import { queryWithRetry } from '../db_config/queryHelper.js';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -38,7 +39,7 @@ passport.use(
         const google_id = profile.id;
 
         // Check if user exists
-        let result = await pool.query(
+        let result = await queryWithRetry(
           'SELECT id, email, full_name, google_id, created_at FROM users WHERE email = $1',
           [email.toLowerCase()]
         );
@@ -50,7 +51,7 @@ passport.use(
           user = result.rows[0];
           
           if (!user.google_id) {
-            await pool.query(
+            await queryWithRetry(
               'UPDATE users SET google_id = $1 WHERE id = $2',
               [google_id, user.id]
             );
@@ -58,7 +59,7 @@ passport.use(
           }
         } else {
           // Create new user (no password needed for Google auth)
-          result = await pool.query(
+          result = await queryWithRetry(
             'INSERT INTO users (email, full_name, google_id, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, google_id, created_at',
             [email.toLowerCase(), full_name, google_id, ''] // Empty password_hash for Google-only accounts
           );
@@ -96,7 +97,7 @@ passport.use(
         const placeholder_email = `facebook_${facebook_id}@placeholder.local`;
 
         // Check if user exists by facebook_id
-        let result = await pool.query(
+        let result = await queryWithRetry(
           'SELECT id, email, full_name, facebook_id, created_at FROM users WHERE facebook_id = $1',
           [facebook_id]
         );
@@ -108,7 +109,7 @@ passport.use(
           user = result.rows[0];
         } else {
           // Create new user (no password needed for Facebook auth)
-          result = await pool.query(
+          result = await queryWithRetry(
             'INSERT INTO users (email, full_name, facebook_id, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, facebook_id, created_at',
             [placeholder_email, full_name, facebook_id, ''] // Empty password_hash for Facebook-only accounts
           );
@@ -131,7 +132,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const result = await pool.query(
+    const result = await queryWithRetry(
       'SELECT id, email, full_name, google_id, facebook_id, created_at FROM users WHERE id = $1',
       [id]
     );
