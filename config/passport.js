@@ -83,8 +83,7 @@ passport.use(
       clientSecret: FACEBOOK_APP_SECRET,
       callbackURL: FACEBOOK_CALLBACK_URL,
       profileFields: ['id', 'displayName', 'name'],
-      // Note: 'email' scope requires Facebook App Review
-      // For now, we'll use facebook_id as the unique identifier
+      //'email' scope requires Facebook App Review for now, we'll use facebook_id as the unique identifier
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -92,7 +91,7 @@ passport.use(
         const full_name = profile.displayName || `${profile.name?.givenName || ''} ${profile.name?.familyName || ''}`.trim();
         const facebook_id = profile.id;
 
-        // Generate a placeholder email using facebook_id
+        // generate a placeholder email using facebook_id
         // Users can update their email later if needed
         const placeholder_email = `facebook_${facebook_id}@placeholder.local`;
 

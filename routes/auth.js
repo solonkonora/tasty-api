@@ -197,17 +197,17 @@ router.get('/google/callback',
       // Generate JWT token (same as email/password login)
       const token = generateToken(user.id, user.email);
 
-      // Set httpOnly cookie
+      // Set httpOnly cookie (works for same-origin)
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 
-      // Redirect to frontend with success
-      // Frontend will call /auth/me to get user info
-      res.redirect(`${FRONTEND_URL}/?auth=success`);
+      // Also pass token in URL for cross-origin scenarios
+      // Frontend can extract and store it
+      res.redirect(`${FRONTEND_URL}/?auth=success&token=${token}`);
     } catch (error) {
       console.error('Google callback error:', error);
       res.redirect(`${FRONTEND_URL}/login?error=callback_failed`);
@@ -247,17 +247,17 @@ router.get('/facebook/callback',
       // Generate JWT token (same as email/password login)
       const token = generateToken(user.id, user.email);
 
-      // Set httpOnly cookie
+      // Set httpOnly cookie (works for same-origin)
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 
-      // Redirect to frontend with success
-      // Frontend will call /auth/me to get user info
-      res.redirect(`${FRONTEND_URL}/?auth=success`);
+      // Also pass token in URL for cross-origin scenarios
+      // Frontend can extract and store it
+      res.redirect(`${FRONTEND_URL}/?auth=success&token=${token}`);
     } catch (error) {
       console.error('Facebook callback error:', error);
       res.redirect(`${FRONTEND_URL}/login?error=callback_failed`);
