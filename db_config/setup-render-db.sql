@@ -1,4 +1,3 @@
--- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -7,7 +6,6 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Users table
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -19,7 +17,6 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Recipes table
 CREATE TABLE IF NOT EXISTS recipes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -31,7 +28,6 @@ CREATE TABLE IF NOT EXISTS recipes (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Ingredients table
 CREATE TABLE IF NOT EXISTS ingredients (
     id SERIAL PRIMARY KEY,
     recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
@@ -41,7 +37,6 @@ CREATE TABLE IF NOT EXISTS ingredients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Instructions table
 CREATE TABLE IF NOT EXISTS instructions (
     id SERIAL PRIMARY KEY,
     recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
@@ -50,7 +45,6 @@ CREATE TABLE IF NOT EXISTS instructions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Favorites table
 CREATE TABLE IF NOT EXISTS favorites (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -69,3 +63,18 @@ CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id);
 CREATE INDEX IF NOT EXISTS idx_favorites_recipe_id ON favorites(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_users_facebook_id ON users(facebook_id);
+
+-- Insert categories
+INSERT INTO categories (name, description) VALUES
+('breakfast', 'Traditional Cameroonian breakfast dishes'),
+('lunch', 'Popular lunch meals from Cameroon'),
+('dinner', 'Authentic Cameroonian dinner recipes'),
+('dessert', 'Sweet Cameroonian treats and desserts'),
+('snacks', 'Quick and tasty Cameroonian snacks')
+ON CONFLICT DO NOTHING;
+
+-- Verify setup
+SELECT 'Tables created successfully!' as status;
+SELECT table_name FROM information_schema.tables 
+WHERE table_schema = 'public' 
+ORDER BY table_name;
