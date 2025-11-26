@@ -14,6 +14,7 @@ This is a backend API for a food recipe application. It provides endpoints for m
 - Node.js (v18 or above)
 - PostgreSQL database
 - Google OAuth credentials (for Google Sign-In)
+- Cloudinary account (for image uploads)
 
 ## Installation
 
@@ -44,6 +45,52 @@ Update the database connection credentials:
     DB_PASSWORD=your_database_password
 
     Save the changes to the env.example file.
+
+## Setting up Cloudinary for Image Uploads
+
+1. Create a Cloudinary account:
+   - Go to https://cloudinary.com and sign up for a free account
+   - After signing up, you'll be taken to the dashboard
+
+2. Get your Cloudinary credentials:
+   - On the dashboard, you'll see your **Cloud Name**, **API Key**, and **API Secret**
+   - Copy these values
+
+3. Add Cloudinary credentials to your `.env` file:
+   ```
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+
+4. **For Render deployment**:
+   - Go to your Render dashboard
+   - Select your backend service
+   - Navigate to "Environment" tab
+   - Add these environment variables:
+     - `CLOUDINARY_CLOUD_NAME` = your cloud name
+     - `CLOUDINARY_API_KEY` = your API key
+     - `CLOUDINARY_API_SECRET` = your API secret
+   - Click "Save Changes" and your service will redeploy
+
+## Setting up Google OAuth
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable Google+ API
+4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
+5. Configure consent screen if prompted
+6. Set application type to "Web application"
+7. Add authorized redirect URIs:
+   - For local: `http://localhost:3000/api/auth/google/callback`
+   - For production: `https://your-domain.com/api/auth/google/callback`
+8. Copy the Client ID and Client Secret
+9. Add to your `.env` file:
+   ```
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+   ```
 
 Rename the env.example file:
 
@@ -82,6 +129,7 @@ The API documentation is available at /api-docs endpoint. It provides detailed i
 - `GET /api/recipes`: Get all recipes
 - `GET /api/recipes/:id`: Get a specific recipe by ID
 - `POST /api/recipes`: Create a new recipe (authenticated)
+- `POST /api/recipes/upload-image`: Upload recipe image to Cloudinary (authenticated)
 - `PUT /api/recipes/:id`: Update a recipe (owner only)
 - `DELETE /api/recipes/:id`: Delete a recipe (owner only)
 

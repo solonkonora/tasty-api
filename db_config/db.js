@@ -8,10 +8,10 @@ const app = express();
 
 const { Pool } = pkg;
 
-// Log which connection method is being used
+// log which connection method is being used
 console.log('Database connection mode:', process.env.DATABASE_URL ? 'DATABASE_URL' : 'Individual variables');
 if (process.env.DATABASE_URL) {
-  // Log masked connection string (hide password)
+  // log masked connection string (hide password)
   const masked = process.env.DATABASE_URL.replace(/:([^:@]+)@/, ':****@');
   console.log('Connection string:', masked);
 }
@@ -40,20 +40,19 @@ const pool = process.env.DATABASE_URL
 //handle connection error
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
-  // Don't exit, just log the error
 });
 
 // Test connection on startup
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error('❌ Database connection failed:', err.message);
+    console.error('Database connection failed:', err.message);
     console.error('Error details:', {
       code: err.code,
       host: process.env.DB_HOST || 'from DATABASE_URL',
       database: process.env.DB_DATABASE || 'from DATABASE_URL'
     });
   } else {
-    console.log('✅ Database connected successfully at', res.rows[0].now);
+    console.log('Database connected successfully at', res.rows[0].now);
   }
 });
 

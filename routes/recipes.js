@@ -11,7 +11,7 @@ config();
 
 const router = express.Router();
 
-// Configure multer for memory storage
+// configure multer for memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
@@ -31,9 +31,13 @@ const swaggerDocument = YAML.load('./documentary/swagger-specs.yaml');
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
-// Upload image endpoint
+// upload image endpoint
 router.post('/upload-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
+    console.log('Received image upload request');
+    console.log('User:', req.user?.userId);
+    console.log('File:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'No file');
+    
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
@@ -46,18 +50,23 @@ router.post('/upload-image', authenticateToken, upload.single('image'), async (r
     const folderName = 'cameroon-recipes';
     const uploadedImage = await uploadImageToFolder(dataURI, folderName);
 
+    console.log('✅ Image upload successful');
     res.json({ 
       success: true, 
       url: uploadedImage.secure_url,
       publicId: uploadedImage.public_id
     });
   } catch (error) {
-    console.error('Image upload error:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error('❌ Image upload error:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Failed to upload image',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
-// Get all recipes (all public recipes visible to everyone)
+// get all recipes (all public recipes visible to everyone)
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const query = 'SELECT * FROM recipes ORDER BY category_id ASC, id ASC';
@@ -70,7 +79,7 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 
-// Get a recipe by ID (all recipes visible to everyone)
+// get a recipe by ID (all recipes visible to everyone)
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,14 +107,14 @@ router.post('/', authenticateToken, async (req, res) => {
 
     let imageUrl = image_path;
 
-    // Only upload to Cloudinary if image_path looks like a local file or data URL
+    // only upload to Cloudinary if image_path looks like a local file or data URL
     if (image_path && (image_path.startsWith('data:') || image_path.startsWith('file:'))) {
       const folderName = 'cameroon-recipes'; 
       const uploadedImage = await uploadImageToFolder(image_path, folderName);
       imageUrl = uploadedImage.secure_url;
     }
 
-    // Save the recipe details, including the image path and user_id, to the database
+    // save the recipe details, including the image path and user_id, to the database
     const query = 'INSERT INTO recipes (title, description, image_path, category_id, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *';
     const values = [title, description, imageUrl, category_id, userId];
     const { rows } = await pool.query(query, values);
