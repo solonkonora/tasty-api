@@ -2,10 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-/**
- * Middleware to authenticate JWT tokens
- * Expects token in Authorization header or httpOnly cookie
- */
+// Middleware to authenticate JWT tokens
 export function authenticateToken(req, res, next) {
   // Try to get token from Authorization header
   const authHeader = req.headers['authorization'];
@@ -30,7 +27,7 @@ export function authenticateToken(req, res, next) {
   });
 }
 
-// Optional auth middleware - doesn't fail if no token
+// optional auth middleware - doesn't fail if no token
 export function optionalAuth(req, res, next) {
   const authHeader = req.headers['authorization'];
   let token = authHeader && authHeader.split(' ')[1];
@@ -48,7 +45,6 @@ export function optionalAuth(req, res, next) {
   }
   next();
 }
-
 
 // Generate JWT token
 export function generateToken(userId, email) {
