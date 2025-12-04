@@ -24,9 +24,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Enable CORS for all routes
 const allowedOrigins = [
-  'http://localhost:5173',
+  'http://localhost:3001',  // Next.js app
   'https://food-recipe-app-eosin.vercel.app',
-  process.env.FRONTEND_URL
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_REACT,
+  process.env.FRONTEND_URL_NEXTJS
 ].filter(Boolean); // remove undefined values
 
 app.use(cors({
@@ -40,7 +42,7 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true // Allow cookies
+  credentials: true
 }));
 
 app.use(logger('dev'));   //to loggin request in dev mode
