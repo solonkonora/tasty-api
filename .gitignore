@@ -75,9 +75,14 @@ web_modules/
 # dotenv environment variable files
 .env*
 .env.development.local
-.env.test.local
+.env.test.local 
 .env.production.local
 .env.example*
+
+# Development-only database scripts (destructive operations)
+scripts/reset-database.js
+scripts/reset-db.sh
+scripts/classify-ingredients.js
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

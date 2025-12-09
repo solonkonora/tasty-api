@@ -47,20 +47,26 @@ passport.use(
         let user;
 
         if (result.rows.length > 0) {
-          // User exists - update google_id if not set
+          // User exists - update google_id and verify email if not set
           user = result.rows[0];
           
           if (!user.google_id) {
             await queryWithRetry(
-              'UPDATE users SET google_id = $1 WHERE id = $2',
+              'UPDATE users SET google_id = $1, email_verified = TRUE WHERE id = $2',
               [google_id, user.id]
             );
             user.google_id = google_id;
+          } else {
+            // Ensure email is verified for existing OAuth users
+            await queryWithRetry(
+              'UPDATE users SET email_verified = TRUE WHERE id = $1',
+              [user.id]
+            );
           }
         } else {
-          // Create new user (no password needed for Google auth)
+          // Create new user (no password needed for Google auth, email pre-verified)
           result = await queryWithRetry(
-            'INSERT INTO users (email, full_name, google_id, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, google_id, created_at',
+            'INSERT INTO users (email, full_name, google_id, password_hash, email_verified) VALUES ($1, $2, $3, $4, TRUE) RETURNING id, email, full_name, google_id, created_at',
             [email.toLowerCase(), full_name, google_id, ''] // Empty password_hash for Google-only accounts
           );
           user = result.rows[0];
@@ -104,12 +110,16 @@ passport.use(
         let user;
 
         if (result.rows.length > 0) {
-          // User exists
+          // User exists - ensure email is verified
           user = result.rows[0];
+          await queryWithRetry(
+            'UPDATE users SET email_verified = TRUE WHERE id = $1',
+            [user.id]
+          );
         } else {
-          // Create new user (no password needed for Facebook auth)
+          // Create new user (no password needed for Facebook auth, email pre-verified)
           result = await queryWithRetry(
-            'INSERT INTO users (email, full_name, facebook_id, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, facebook_id, created_at',
+            'INSERT INTO users (email, full_name, facebook_id, password_hash, email_verified) VALUES ($1, $2, $3, $4, TRUE) RETURNING id, email, full_name, facebook_id, created_at',
             [placeholder_email, full_name, facebook_id, ''] // Empty password_hash for Facebook-only accounts
           );
           user = result.rows[0];

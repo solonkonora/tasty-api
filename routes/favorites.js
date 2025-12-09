@@ -12,7 +12,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const userId = req.user.userId;
     
     const query = `
-      SELECT f.id as favorite_id, f.created_at as favorited_at, 
+      SELECT f.id as favorite_id, f.recipe_id, f.created_at as favorited_at, 
              r.id, r.title, r.description, r.image_path, r.category_id
       FROM favorites f
       JOIN recipes r ON f.recipe_id = r.id
