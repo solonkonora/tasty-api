@@ -78,6 +78,19 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// get user's own recipes
+router.get('/my-recipes', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const query = 'SELECT * FROM recipes WHERE user_id = $1 ORDER BY created_at DESC';
+    const { rows } = await pool.query(query, [userId]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Fetch my recipes error:', error);
+    res.status(500).json({ error: 'Failed to fetch your recipes' });
+  }
+});
+
 
 // get a recipe by ID (all recipes visible to everyone)
 router.get('/:id', authenticateToken, async (req, res) => {
