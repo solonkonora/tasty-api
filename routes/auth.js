@@ -4,12 +4,13 @@ import crypto from 'crypto';
 import pool from '../db_config/db.js';
 import { generateToken } from '../middleware/auth.js';
 import passport from '../config/passport.js';
-import { sendMagicLinkEmail, sendWelcomeEmail } from '../utils/emailService.js';
+import { sendMagicLinkEmail, sendWelcomeEmail, sendVerificationEmail } from '../utils/emailService.js';
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
+const EMAIL_VERIFICATION_EXPIRY_HOURS = 24;
 
 
 router.post('/signup', async (req, res) => {
@@ -38,33 +39,34 @@ router.post('/signup', async (req, res) => {
     // Hash password
     const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Create user
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + EMAIL_VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000);
+
+    // Create user with verification token
     const result = await pool.query(
-      'INSERT INTO users (email, password_hash, full_name) VALUES ($1, $2, $3) RETURNING id, email, full_name, created_at',
-      [email.toLowerCase(), password_hash, full_name || null]
+      `INSERT INTO users (email, password_hash, full_name, email_verified, verification_token, verification_token_expires) 
+       VALUES ($1, $2, $3, FALSE, $4, $5) 
+       RETURNING id, email, full_name, created_at, email_verified`,
+      [email.toLowerCase(), password_hash, full_name || null, verificationToken, verificationExpires]
     );
 
     const user = result.rows[0];
 
-    // Generate JWT
-    const token = generateToken(user.id, user.email);
+    // Send verification email
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue anyway - user is created, they can request new verification email
+    }
 
-    // Set httpOnly cookie (more secure)
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Only HTTPS in production
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
-
+    // DO NOT generate JWT or log user in
+    // They must verify email first
     res.status(201).json({
-      user: {
-        id: user.id,
-        email: user.email,
-        full_name: user.full_name,
-        created_at: user.created_at
-      },
-      token // Also return token for clients that prefer header-based auth
+      message: 'Account created successfully! Please check your email to verify your account.',
+      email: user.email,
+      emailVerified: false
     });
   } catch (error) {
     console.error('Signup error:', error);
@@ -82,7 +84,7 @@ router.post('/login', async (req, res) => {
 
     // Find user
     const result = await pool.query(
-      'SELECT id, email, password_hash, full_name, created_at FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, full_name, created_at, email_verified FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -97,6 +99,15 @@ router.post('/login', async (req, res) => {
 
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Check if email is verified
+    if (!user.email_verified) {
+      return res.status(403).json({ 
+        error: 'Please verify your email before logging in. Check your inbox for the verification link.',
+        emailVerified: false,
+        email: user.email
+      });
     }
 
     // Generate JWT
@@ -128,6 +139,139 @@ router.post('/login', async (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
+});
+
+// ========================================
+// Email Verification
+// ========================================
+
+/**
+ * Verify email address using token from email
+ */
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Verification token is required' });
+    }
+
+    // Find user with this verification token
+    const result = await pool.query(
+      'SELECT id, email, full_name, email_verified, verification_token_expires FROM users WHERE verification_token = $1',
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid verification token' });
+    }
+
+    const user = result.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({ 
+        error: 'Email already verified. You can now log in.',
+        alreadyVerified: true
+      });
+    }
+
+    // Check if token has expired
+    if (new Date(user.verification_token_expires) < new Date()) {
+      return res.status(400).json({ 
+        error: 'Verification link has expired. Please request a new one.',
+        expired: true,
+        email: user.email
+      });
+    }
+
+    // Mark email as verified and clear verification token
+    await pool.query(
+      'UPDATE users SET email_verified = TRUE, verification_token = NULL, verification_token_expires = NULL WHERE id = $1',
+      [user.id]
+    );
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail(user.email, user.full_name).catch(err => 
+      console.error('Failed to send welcome email:', err)
+    );
+
+    // Generate JWT and log user in automatically after verification
+    const jwtToken = generateToken(user.id, user.email);
+
+    // Set httpOnly cookie
+    res.cookie('token', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({
+      message: 'Email verified successfully! You are now logged in.',
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+      },
+      token: jwtToken
+    });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ error: 'Failed to verify email' });
+  }
+});
+
+/**
+ * Resend verification email
+ */
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Find user
+    const result = await pool.query(
+      'SELECT id, email, email_verified FROM users WHERE email = $1',
+      [email.toLowerCase()]
+    );
+
+    if (result.rows.length === 0) {
+      // Don't reveal if user exists or not (security)
+      return res.json({ message: 'If an account exists with that email, a verification link has been sent.' });
+    }
+
+    const user = result.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({ 
+        error: 'Email is already verified. You can log in now.',
+        alreadyVerified: true
+      });
+    }
+
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + EMAIL_VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000);
+
+    // Update user with new token
+    await pool.query(
+      'UPDATE users SET verification_token = $1, verification_token_expires = $2 WHERE id = $3',
+      [verificationToken, verificationExpires, user.id]
+    );
+
+    // Send verification email
+    await sendVerificationEmail(user.email, verificationToken);
+
+    res.json({ message: 'Verification email sent! Please check your inbox.' });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({ error: 'Failed to resend verification email' });
+  }
 });
 
 // ========================================

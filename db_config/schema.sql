@@ -15,8 +15,21 @@ CREATE TABLE IF NOT EXISTS users (
     full_name VARCHAR(255),
     google_id VARCHAR(255) UNIQUE,
     facebook_id VARCHAR(255) UNIQUE,
+    email_verified BOOLEAN DEFAULT FALSE,
+    verification_token VARCHAR(255) UNIQUE,
+    verification_token_expires TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Magic Links table for passwordless authentication
+CREATE TABLE IF NOT EXISTS magic_links (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used BOOLEAN DEFAULT FALSE
 );
 
 -- Recipes table
@@ -38,6 +51,7 @@ CREATE TABLE IF NOT EXISTS ingredients (
     name VARCHAR(255) NOT NULL,
     quantity VARCHAR(100),
     unit VARCHAR(50),
+    is_main BOOLEAN DEFAULT true NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -63,9 +77,13 @@ CREATE TABLE IF NOT EXISTS favorites (
 CREATE INDEX IF NOT EXISTS idx_recipes_category_id ON recipes(category_id);
 CREATE INDEX IF NOT EXISTS idx_recipes_user_id ON recipes(user_id);
 CREATE INDEX IF NOT EXISTS idx_ingredients_recipe_id ON ingredients(recipe_id);
+CREATE INDEX IF NOT EXISTS idx_ingredients_is_main ON ingredients(is_main);
 CREATE INDEX IF NOT EXISTS idx_instructions_recipe_id ON instructions(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_instructions_step_number ON instructions(recipe_id, step_number);
 CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id);
 CREATE INDEX IF NOT EXISTS idx_favorites_recipe_id ON favorites(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_users_facebook_id ON users(facebook_id);
+CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_token);
+CREATE INDEX IF NOT EXISTS idx_magic_links_token ON magic_links(token);
+CREATE INDEX IF NOT EXISTS idx_magic_links_email ON magic_links(email);
