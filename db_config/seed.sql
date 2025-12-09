@@ -298,7 +298,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (9, 15, 'Cultural note: While Jollof rice is enjoyed across West Africa, the Cameroonian version is known for its rich, smoky flavor and is a must-have at parties, weddings, and celebrations')
 ON CONFLICT DO NOTHING;
 
--- Recipe 11: Egusi Soup
+-- Recipe 10: Egusi Soup
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
 (10, 'Egusi', '2', 'cups, ground', TRUE),
 (10, 'Palm oil', '1/2', 'cup', TRUE),
@@ -329,7 +329,7 @@ ON CONFLICT DO NOTHING;
 
 -- DINNER RECIPES - Ingredients & Instructions
 
--- Recipe 12: Pepper Soup
+-- Recipe 11: Pepper Soup
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
 (11, 'Catfish or tilapia', '2', 'lbs, cut into chunks', TRUE),
 (11, 'Pepper soup spice mix', '3', 'tablespoons', FALSE),
@@ -357,7 +357,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (11, 10, 'Cultural note: Pepper soup is believed to have medicinal properties and is often given to nursing mothers. It is also a popular evening meal, especially during the rainy season')
 ON CONFLICT DO NOTHING;
 
--- Recipe 13: Mbanga Soup (Palm Nut Soup)
+-- Recipe 12: Mbanga Soup (Palm Nut Soup)
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
 (12, 'Palm nuts (banga)', '4', 'lbs, or 2 cups palm nut cream', TRUE),
 (12, 'Smoked fish', '3', 'pieces', TRUE),
@@ -384,7 +384,7 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (12, 10, 'Cultural note: Mbanga soup is a Littoral and Southwest specialty, particularly among the Sawa people. The palm nut gives it a distinctive red-orange color and rich flavor')
 ON CONFLICT DO NOTHING;
 
--- Recipe 14: Okra Soup
+-- Recipe 13: Okra Soup
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
 (13, 'Fresh okra', '2', 'lbs, chopped or blended', TRUE),
 (13, 'Beef', '1', 'lb, cut into chunks', FALSE),
@@ -413,7 +413,7 @@ ON CONFLICT DO NOTHING;
 
 -- DESSERT RECIPES - Ingredients & Instructions
 
--- Recipe 15: Banana Fritters
+-- Recipe 14: Banana Fritters
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
 (14, 'Ripe bananas', '4', 'large', TRUE),
 (14, 'All-purpose flour', '1', 'cup', TRUE),
@@ -439,174 +439,196 @@ INSERT INTO instructions (recipe_id, step_number, description) VALUES
 (14, 10, 'Cultural note: Banana fritters are a beloved sweet treat often sold by street vendors and enjoyed with tea or coffee')
 ON CONFLICT DO NOTHING;
 
--- Recipe 16: Coconut Drops
+-- Recipe 15: Puff Puff)(Desserts)
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(15, 'Fresh coconut', '2', 'medium, grated', TRUE),
-(15, 'Brown sugar', '2', 'cups', TRUE),
-(15, 'Water', '1', 'cup', TRUE),
-(15, 'Ginger', '1', 'teaspoon, grated', FALSE),
-(15, 'Vanilla extract', '1', 'teaspoon', FALSE)
+(15, 'All-purpose flour', '3', 'cups', TRUE),
+(15, 'Sugar', '1/2', 'cup', TRUE),
+(15, 'Active dry yeast', '2', 'teaspoons', TRUE),
+(15, 'Warm water', '1.5', 'cups', TRUE),
+(15, 'Salt', '1/4', 'teaspoon', FALSE),
+(15, 'Nutmeg', '1/4', 'teaspoon', FALSE),
+(15, 'Vegetable oil', '4', 'cups (for frying)', TRUE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(15, 1, 'Grate fresh coconut into small pieces'),
-(15, 2, 'In a heavy-bottomed pot, combine sugar and water'),
-(15, 3, 'Heat over medium heat, stirring until sugar dissolves'),
-(15, 4, 'Add grated ginger and bring to a boil'),
-(15, 5, 'Add grated coconut to the syrup and stir constantly'),
-(15, 6, 'Cook on medium heat, stirring frequently until the mixture caramelizes and becomes sticky (about 20-25 minutes)'),
-(15, 7, 'Add vanilla extract and stir'),
-(15, 8, 'Drop spoonfuls of the mixture onto a greased tray or parchment paper'),
-(15, 9, 'Let cool and harden completely (about 30 minutes)'),
-(15, 10, 'Store in an airtight container'),
-(15, 11, 'Cultural note: Coconut drops are a traditional candy often made during holidays and celebrations, particularly popular with children')
+(15, 1, 'In a large bowl, mix flour, sugar, yeast, salt, and nutmeg together'),
+(15, 2, 'Gradually add warm water while stirring to form a smooth batter (similar to pancake batter consistency)'),
+(15, 3, 'Cover the bowl with a clean cloth and let it rise in a warm place for 45-60 minutes until it doubles in size'),
+(15, 4, 'Heat vegetable oil in a deep pot over medium heat (about 350°F/175°C)'),
+(15, 5, 'Using your hand or a spoon, scoop small amounts of batter and drop into the hot oil'),
+(15, 6, 'Fry until golden brown on all sides, turning occasionally (about 3-4 minutes)'),
+(15, 7, 'Remove with a slotted spoon and drain on paper towels'),
+(15, 8, 'Serve warm, optionally with beans or as a standalone snack. Cultural note: Puff puff is often sold by street vendors throughout the day')
+ON CONFLICT DO NOTHING;
+
+-- Recipe 16: Coconut Drops
+INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
+(16, 'Fresh coconut', '2', 'medium, grated', TRUE),
+(16, 'Brown sugar', '2', 'cups', TRUE),
+(16, 'Water', '1', 'cup', TRUE),
+(16, 'Ginger', '1', 'teaspoon, grated', FALSE),
+(16, 'Vanilla extract', '1', 'teaspoon', FALSE)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO instructions (recipe_id, step_number, description) VALUES
+(16, 1, 'Grate fresh coconut into small pieces'),
+(16, 2, 'In a heavy-bottomed pot, combine sugar and water'),
+(16, 3, 'Heat over medium heat, stirring until sugar dissolves'),
+(16, 4, 'Add grated ginger and bring to a boil'),
+(16, 5, 'Add grated coconut to the syrup and stir constantly'),
+(16, 6, 'Cook on medium heat, stirring frequently until the mixture caramelizes and becomes sticky (about 20-25 minutes)'),
+(16, 7, 'Add vanilla extract and stir'),
+(16, 8, 'Drop spoonfuls of the mixture onto a greased tray or parchment paper'),
+(16, 9, 'Let cool and harden completely (about 30 minutes)'),
+(16, 10, 'Store in an airtight container'),
+(16, 11, 'Cultural note: Coconut drops are a traditional candy often made during holidays and celebrations, particularly popular with children')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 17: Chin Chin
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(16, 'All-purpose flour', '4', 'cups', TRUE),
-(16, 'Sugar', '1/2', 'cup', TRUE),
-(16, 'Butter', '1/2', 'cup, softened', TRUE),
-(16, 'Eggs', '2', 'large', TRUE),
-(16, 'Milk', '1/4', 'cup', TRUE),
-(16, 'Baking powder', '1', 'teaspoon', TRUE),
-(16, 'Nutmeg', '1/2', 'teaspoon', FALSE),
-(16, 'Salt', '1/4', 'teaspoon', FALSE),
-(16, 'Vegetable oil', '4', 'cups (for frying)', TRUE)
+(17, 'All-purpose flour', '4', 'cups', TRUE),
+(17, 'Sugar', '1/2', 'cup', TRUE),
+(17, 'Butter', '1/2', 'cup, softened', TRUE),
+(17, 'Eggs', '2', 'large', TRUE),
+(17, 'Milk', '1/4', 'cup', TRUE),
+(17, 'Baking powder', '1', 'teaspoon', TRUE),
+(17, 'Nutmeg', '1/2', 'teaspoon', FALSE),
+(17, 'Salt', '1/4', 'teaspoon', FALSE),
+(17, 'Vegetable oil', '4', 'cups (for frying)', TRUE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(16, 1, 'In a large bowl, mix flour, sugar, baking powder, nutmeg, and salt'),
-(16, 2, 'Add softened butter and rub into the flour until it resembles breadcrumbs'),
-(16, 3, 'Beat eggs and milk together, then add to the flour mixture'),
-(16, 4, 'Knead to form a firm but smooth dough (add more flour if too sticky)'),
-(16, 5, 'Roll out dough on a floured surface to about 1/4 inch thickness'),
-(16, 6, 'Cut into small squares or desired shapes'),
-(16, 7, 'Heat oil in a deep pot over medium heat'),
-(16, 8, 'Fry chin chin in batches until golden brown (about 3-4 minutes)'),
-(16, 9, 'Remove and drain on paper towels'),
-(16, 10, 'Let cool completely before storing in an airtight container'),
-(16, 11, 'Cultural note: Chin chin is a crunchy snack served at parties, weddings, and festive occasions. It pairs perfectly with soft drinks or tea and can last for weeks when properly stored')
+(17, 1, 'In a large bowl, mix flour, sugar, baking powder, nutmeg, and salt'),
+(17, 2, 'Add softened butter and rub into the flour until it resembles breadcrumbs'),
+(17, 3, 'Beat eggs and milk together, then add to the flour mixture'),
+(17, 4, 'Knead to form a firm but smooth dough (add more flour if too sticky)'),
+(17, 5, 'Roll out dough on a floured surface to about 1/4 inch thickness'),
+(17, 6, 'Cut into small squares or desired shapes'),
+(17, 7, 'Heat oil in a deep pot over medium heat'),
+(17, 8, 'Fry chin chin in batches until golden brown (about 3-4 minutes)'),
+(17, 9, 'Remove and drain on paper towels'),
+(17, 10, 'Let cool completely before storing in an airtight container'),
+(17, 11, 'Cultural note: Chin chin is a crunchy snack served at parties, weddings, and festive occasions. It pairs perfectly with soft drinks or tea and can last for weeks when properly stored')
 ON CONFLICT DO NOTHING;
 
 -- SNACK RECIPES - Ingredients & Instructions
 
 -- Recipe 18: Soya (Suya)
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(17, 'Beef', '2', 'lbs, thinly sliced', TRUE),
-(17, 'Ginger powder', '2', 'tablespoons', TRUE),
-(17, 'Garlic powder', '2', 'tablespoons', TRUE),
-(17, 'Cayenne pepper', '2', 'tablespoons', TRUE),
-(17, 'Paprika', '1', 'tablespoon', TRUE),
-(17, 'Onion powder', '1', 'tablespoon', TRUE),
-(17, 'Maggi cubes', '2', 'cubes, crushed', TRUE),
-(17, 'Salt', '1', 'teaspoon', TRUE),
-(17, 'Fresh onions', '2', 'large, sliced (for serving)', FALSE),
-(17, 'Fresh tomatoes', '3', 'medium, sliced (for serving)', FALSE)
+(18, 'Beef', '2', 'lbs, thinly sliced', TRUE),
+(18, 'Ginger powder', '2', 'tablespoons', TRUE),
+(18, 'Garlic powder', '2', 'tablespoons', TRUE),
+(18, 'Cayenne pepper', '2', 'tablespoons', TRUE),
+(18, 'Paprika', '1', 'tablespoon', TRUE),
+(18, 'Onion powder', '1', 'tablespoon', TRUE),
+(18, 'Maggi cubes', '2', 'cubes, crushed', TRUE),
+(18, 'Salt', '1', 'teaspoon', TRUE),
+(18, 'Fresh onions', '2', 'large, sliced (for serving)', FALSE),
+(18, 'Fresh tomatoes', '3', 'medium, sliced (for serving)', FALSE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(17, 1, 'Slice beef into thin strips against the grain'),
-(17, 2, 'In a bowl, mix groundnut powder, ginger, garlic, cayenne pepper, paprika, onion powder, crushed Maggi, and salt to make suya spice'),
-(17, 3, 'Rub the beef strips with oil, then coat generously with the suya spice mixture'),
-(17, 4, 'Thread the beef onto skewers'),
-(17, 5, 'Let marinate for at least 30 minutes (longer for more flavor)'),
-(17, 6, 'Prepare a charcoal grill or use a grill pan on high heat'),
-(17, 7, 'Grill the beef skewers for 3-4 minutes on each side, basting with oil as needed'),
-(17, 8, 'The meat should be charred on the outside but juicy inside'),
-(17, 9, 'Remove from skewers and place on a serving plate'),
-(17, 10, 'Sprinkle with more suya spice if desired'),
-(17, 11, 'Serve hot with sliced onions, tomatoes, and fresh pepper'),
-(17, 12, 'Cultural note: Soya (Suya) is the king of Cameroonian street food, particularly popular in the evening. It originated from Northern Cameroon and has spread throughout the country. Suya spots called "makolo" are social gathering places')
+(18, 1, 'Slice beef into thin strips against the grain'),
+(18, 2, 'In a bowl, mix groundnut powder, ginger, garlic, cayenne pepper, paprika, onion powder, crushed Maggi, and salt to make suya spice'),
+(18, 3, 'Rub the beef strips with oil, then coat generously with the suya spice mixture'),
+(18, 4, 'Thread the beef onto skewers'),
+(18, 5, 'Let marinate for at least 30 minutes (longer for more flavor)'),
+(18, 6, 'Prepare a charcoal grill or use a grill pan on high heat'),
+(18, 7, 'Grill the beef skewers for 3-4 minutes on each side, basting with oil as needed'),
+(18, 8, 'The meat should be charred on the outside but juicy inside'),
+(18, 9, 'Remove from skewers and place on a serving plate'),
+(18, 10, 'Sprinkle with more suya spice if desired'),
+(18, 11, 'Serve hot with sliced onions, tomatoes, and fresh pepper'),
+(18, 12, 'Cultural note: Soya (Suya) is the king of Cameroonian street food, particularly popular in the evening. It originated from Northern Cameroon and has spread throughout the country. Suya spots called "makolo" are social gathering places')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 19: Beignets (Another Puff Puff variant)
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(18, 'All-purpose flour', '3', 'cups', TRUE),
-(18, 'Sugar', '1/2', 'cup', TRUE),
-(18, 'Active dry yeast', '2', 'teaspoons', TRUE),
-(18, 'Warm water', '1.5', 'cups', TRUE),
-(18, 'Salt', '1/4', 'teaspoon', FALSE),
-(18, 'Vanilla extract', '1', 'teaspoon', FALSE),
-(18, 'Vegetable oil', '4', 'cups (for frying)', TRUE)
+(19, 'All-purpose flour', '3', 'cups', TRUE),
+(19, 'Sugar', '1/2', 'cup', TRUE),
+(19, 'Active dry yeast', '2', 'teaspoons', TRUE),
+(19, 'Warm water', '1.5', 'cups', TRUE),
+(19, 'Salt', '1/4', 'teaspoon', FALSE),
+(19, 'Vanilla extract', '1', 'teaspoon', FALSE),
+(19, 'Vegetable oil', '4', 'cups (for frying)', TRUE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(18, 1, 'Mix flour, sugar, yeast, and salt in a bowl'),
-(18, 2, 'Add warm water and vanilla, stir until smooth batter forms'),
-(18, 3, 'Cover and let rise for 45-60 minutes'),
-(18, 4, 'Heat oil to 350°F (175°C)'),
-(18, 5, 'Drop spoonfuls of batter into hot oil'),
-(18, 6, 'Fry until golden brown, turning occasionally'),
-(18, 7, 'Drain on paper towels and serve warm'),
-(18, 8, 'Cultural note: Beignets are sold by street vendors throughout Cameroon, especially popular as an afternoon snack with a cold drink')
+(19, 1, 'Mix flour, sugar, yeast, and salt in a bowl'),
+(19, 2, 'Add warm water and vanilla, stir until smooth batter forms'),
+(19, 3, 'Cover and let rise for 45-60 minutes'),
+(19, 4, 'Heat oil to 350°F (175°C)'),
+(19, 5, 'Drop spoonfuls of batter into hot oil'),
+(19, 6, 'Fry until golden brown, turning occasionally'),
+(19, 7, 'Drain on paper towels and serve warm'),
+(19, 8, 'Cultural note: Beignets are sold by street vendors throughout Cameroon, especially popular as an afternoon snack with a cold drink')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 20: Roasted Corn and Pears
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(19, 'Fresh corn', '6', 'ears, with husks', TRUE),
-(19, 'African pear ', '6', 'pieces', TRUE),
-(19, 'Salt', '1', 'teaspoon (optional)', FALSE)
+(20, 'Fresh corn', '6', 'ears, with husks', TRUE),
+(20, 'African pear ', '6', 'pieces', TRUE),
+(20, 'Salt', '1', 'teaspoon (optional)', FALSE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(19, 1, 'Prepare a charcoal grill or open fire'),
-(19, 2, 'Place whole corn ears directly on the grill'),
-(19, 3, 'Roast corn, turning frequently until husks are charred and kernels are tender (about 15-20 minutes)'),
-(19, 4, 'While corn is roasting, place African pears near the heat to warm them'),
-(19, 5, 'Turn pears occasionally until the skin is slightly charred and the flesh is soft (about 10 minutes)'),
-(19, 6, 'Remove corn from grill and peel back husks'),
-(19, 7, 'Optionally sprinkle corn with salt'),
-(19, 8, 'Peel the softened pear skin and serve alongside the roasted corn'),
-(19, 9, 'Eat by alternating bites of corn and pear the buttery pear complements the sweet corn perfectly'),
-(19, 10, 'Cultural note: This combination is a beloved street food during July-September. The African pear has a buttery texture and is rich in healthy fats. This snack is enjoyed by people of all ages, especially in the evenings')
+(20, 1, 'Prepare a charcoal grill or open fire'),
+(20, 2, 'Place whole corn ears directly on the grill'),
+(20, 3, 'Roast corn, turning frequently until husks are charred and kernels are tender (about 15-20 minutes)'),
+(20, 4, 'While corn is roasting, place African pears near the heat to warm them'),
+(20, 5, 'Turn pears occasionally until the skin is slightly charred and the flesh is soft (about 10 minutes)'),
+(20, 6, 'Remove corn from grill and peel back husks'),
+(20, 7, 'Optionally sprinkle corn with salt'),
+(20, 8, 'Peel the softened pear skin and serve alongside the roasted corn'),
+(20, 9, 'Eat by alternating bites of corn and pear the buttery pear complements the sweet corn perfectly'),
+(20, 10, 'Cultural note: This combination is a beloved street food during July-September. The African pear has a buttery texture and is rich in healthy fats. This snack is enjoyed by people of all ages, especially in the evenings')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 21: Plantain Chips
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(20, 'Green plantains', '4', 'large', TRUE),
-(20, 'Vegetable oil', '4', 'cups (for frying)', TRUE),
-(20, 'Salt', '2', 'teaspoons', FALSE),
-(20, 'Cayenne pepper', '1', 'teaspoon (optional)', FALSE)
+(21, 'Green plantains', '4', 'large', TRUE),
+(21, 'Vegetable oil', '4', 'cups (for frying)', TRUE),
+(21, 'Salt', '2', 'teaspoons', FALSE),
+(21, 'Cayenne pepper', '1', 'teaspoon (optional)', FALSE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(20, 1, 'Peel green plantains (tip: cut off ends and make lengthwise slits to remove peel easily)'),
-(20, 2, 'Using a mandoline or sharp knife, slice plantains very thinly (about 1/8 inch thick)'),
-(20, 3, 'Soak plantain slices in salted cold water for 15 minutes to remove excess starch'),
-(20, 4, 'Drain and pat dry thoroughly with paper towels (moisture will cause splattering)'),
-(20, 5, 'Heat oil in a deep pot to 350°F (175°C)'),
-(20, 6, 'Fry plantain slices in small batches until golden and crispy (about 3-4 minutes)'),
-(20, 7, 'Remove with a slotted spoon and drain on paper towels'),
-(20, 8, 'While still hot, season with salt and cayenne pepper if desired'),
-(20, 9, 'Let cool completely - chips will become crispier as they cool'),
-(20, 10, 'Store in an airtight container for up to 2 weeks'),
-(20, 11, 'Cultural note: Plantain chips are a popular snack sold in markets and shops across Cameroon. They are often enjoyed while watching football matches or as a quick snack with drinks')
+(21, 1, 'Peel green plantains (tip: cut off ends and make lengthwise slits to remove peel easily)'),
+(21, 2, 'Using a mandoline or sharp knife, slice plantains very thinly (about 1/8 inch thick)'),
+(21, 3, 'Soak plantain slices in salted cold water for 15 minutes to remove excess starch'),
+(21, 4, 'Drain and pat dry thoroughly with paper towels (moisture will cause splattering)'),
+(21, 5, 'Heat oil in a deep pot to 350°F (175°C)'),
+(21, 6, 'Fry plantain slices in small batches until golden and crispy (about 3-4 minutes)'),
+(21, 7, 'Remove with a slotted spoon and drain on paper towels'),
+(21, 8, 'While still hot, season with salt and cayenne pepper if desired'),
+(21, 9, 'Let cool completely - chips will become crispier as they cool'),
+(21, 10, 'Store in an airtight container for up to 2 weeks'),
+(21, 11, 'Cultural note: Plantain chips are a popular snack sold in markets and shops across Cameroon. They are often enjoyed while watching football matches or as a quick snack with drinks')
 ON CONFLICT DO NOTHING;
 
 -- Recipe 22: Kilishi
 INSERT INTO ingredients (recipe_id, name, quantity, unit, is_main) VALUES
-(21, 'Lean beef', '2', 'lbs', TRUE),
-(21, 'Groundnut (peanut) powder', '1/2', 'cup', TRUE),
-(21, 'Ginger powder', '2', 'tablespoons', FALSE),
-(21, 'Garlic powder', '2', 'tablespoons', FALSE),
-(21, 'Cayenne pepper', '2', 'tablespoons', FALSE),
-(21, 'Onion powder', '1', 'tablespoon', FALSE),
-(21, 'Maggi cubes', '2', 'cubes, crushed', FALSE),
-(21, 'Salt', '1', 'tablespoon', FALSE),
-(21, 'Vegetable oil', '1/4', 'cup', TRUE)
+(22, 'Lean beef', '2', 'lbs', TRUE),
+(22, 'Groundnut (peanut) powder', '1/2', 'cup', TRUE),
+(22, 'Ginger powder', '2', 'tablespoons', FALSE),
+(22, 'Garlic powder', '2', 'tablespoons', FALSE),
+(22, 'Cayenne pepper', '2', 'tablespoons', FALSE),
+(22, 'Onion powder', '1', 'tablespoon', FALSE),
+(22, 'Maggi cubes', '2', 'cubes, crushed', FALSE),
+(22, 'Salt', '1', 'tablespoon', FALSE),
+(22, 'Vegetable oil', '1/4', 'cup', TRUE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO instructions (recipe_id, step_number, description) VALUES
-(21, 1, 'Slice beef into very thin sheets (about 1/4 inch thick) - partially freezing the meat makes this easier'),
-(21, 2, 'Using a meat mallet, pound each slice until paper-thin'),
-(21, 3, 'Mix groundnut powder, ginger, garlic, cayenne pepper, onion powder, crushed Maggi, and salt'),
-(21, 4, 'Rub each meat slice with oil, then coat thoroughly with the spice mixture'),
-(21, 5, 'Lay meat slices on drying racks or hang on a line in direct sunlight for 4-6 hours until partially dried'),
-(21, 6, 'Prepare a low charcoal fire or preheat oven to 200°F (95°C)'),
-(21, 7, 'Grill or bake the dried meat slowly until completely dehydrated and crispy (about 2-3 hours), turning occasionally'),
-(21, 8, 'The meat should be dry, dark, and crispy but not burnt'),
-(21, 9, 'Let cool completely before storing in an airtight container'),
-(21, 10, 'Can be stored for several weeks at room temperature'),
-(21, 11, 'Cultural note: Kilishi is a traditional delicacy from Northern Cameroon, particularly among the Fulani people. It is often taken as a travel snack or gift due to its long shelf life. The drying and smoking process preserves the meat without refrigeration')
+(22, 1, 'Slice beef into very thin sheets (about 1/4 inch thick) - partially freezing the meat makes this easier'),
+(22, 2, 'Using a meat mallet, pound each slice until paper-thin'),
+(22, 3, 'Mix groundnut powder, ginger, garlic, cayenne pepper, onion powder, crushed Maggi, and salt'),
+(22, 4, 'Rub each meat slice with oil, then coat thoroughly with the spice mixture'),
+(22, 5, 'Lay meat slices on drying racks or hang on a line in direct sunlight for 4-6 hours until partially dried'),
+(22, 6, 'Prepare a low charcoal fire or preheat oven to 200°F (95°C)'),
+(22, 7, 'Grill or bake the dried meat slowly until completely dehydrated and crispy (about 2-3 hours), turning occasionally'),
+(22, 8, 'The meat should be dry, dark, and crispy but not burnt'),
+(22, 9, 'Let cool completely before storing in an airtight container'),
+(22, 10, 'Can be stored for several weeks at room temperature'),
+(22, 11, 'Cultural note: Kilishi is a traditional delicacy from Northern Cameroon, particularly among the Fulani people. It is often taken as a travel snack or gift due to its long shelf life. The drying and smoking process preserves the meat without refrigeration')
 ON CONFLICT DO NOTHING;
