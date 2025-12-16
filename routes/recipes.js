@@ -53,11 +53,12 @@ router.post('/upload-image', authenticateToken, upload.single('image'), async (r
     console.log('✅ Image upload successful');
     res.json({ 
       success: true, 
+      imageUrl: uploadedImage.secure_url,
       url: uploadedImage.secure_url,
       publicId: uploadedImage.public_id
     });
   } catch (error) {
-    console.error('❌ Image upload error:', error.message);
+    console.error('Image upload error:', error.message);
     console.error('Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Failed to upload image',
@@ -153,8 +154,18 @@ router.put('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Recipe not found or unauthorized' });
     }
 
+    let imageUrl = image_path;
+
+    // Only upload to Cloudinary if image_path is a new upload (data URL)
+    if (image_path && image_path.startsWith('data:')) {
+      const folderName = 'cameroon-recipes';
+      const uploadedImage = await uploadImageToFolder(image_path, folderName);
+      imageUrl = uploadedImage.secure_url;
+      console.log('✅ New image uploaded during update:', imageUrl);
+    }
+
     const query = 'UPDATE recipes SET title = $1, description = $2, image_path = $3, category_id = $4, updated_at = NOW() WHERE id = $5 AND user_id = $6 RETURNING *';
-    const values = [title, description, image_path, category_id, id, userId];
+    const values = [title, description, imageUrl, category_id, id, userId];
 
     const { rows } = await pool.query(query, values);
 

@@ -30,7 +30,10 @@ export async function uploadImageToFolder(imagePath, folderName) {
         console.log('Image path:', imagePath);
         console.log('Folder name:', folderName);
         const uploadResponse = await cloudinary.uploader.upload(imagePath, {
-            folder: folderName
+            folder: folderName,
+            invalidate: true,  // Invalidate CDN cache
+            use_filename: true,
+            unique_filename: true,  // Generate unique filename to avoid caching issues
         });
         console.log(`Image uploaded to Cloudinary folder '${folderName}': ${uploadResponse.secure_url}`);
         return uploadResponse;

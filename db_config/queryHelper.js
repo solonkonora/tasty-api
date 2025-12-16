@@ -34,4 +34,5 @@ export async function queryWithRetry(queryText, params = [], retries = 3) {
   }
 }
 
+export { queryWithRetry as query };
 export default queryWithRetry;

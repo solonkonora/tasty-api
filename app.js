@@ -13,6 +13,8 @@ import ingredientsRouter from './routes/ingredients.js';
 import instructionsRouter from './routes/instructions.js';
 import authRouter from './routes/auth.js';
 import favoritesRouter from './routes/favorites.js';
+import importRouter from './routes/import.js';
+import searchRouter from './routes/search.js';
 import indexRoute from "./routes/index.js";
 import passport from './config/passport.js';
 
@@ -60,6 +62,8 @@ app.use('/api/recipes', recipeRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/ingredients', ingredientsRouter);
 app.use('/api/instructions', instructionsRouter);
+app.use('/api/import', importRouter);
+app.use('/api/search', searchRouter);
 
 // mount index route last (for homepage only)
 app.use("/", indexRoute);
