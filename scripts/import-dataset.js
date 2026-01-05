@@ -24,7 +24,7 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import path from 'path';
 import process from 'process';
-import readline from 'readline';
+import csv from 'csv-parser';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -65,7 +65,7 @@ function parseRecipeNLG(recipe) {
       ? recipe.directions.map((step, i) => `${i + 1}. ${step}`).join(' ')
       : recipe.directions,
     cuisine: recipe.source || 'Unknown', // Use source as initial cuisine hint
-    image_path: null,
+    image_path: recipe.link, // Use link as image URL
     source_url: recipe.link
   };
 }
@@ -74,7 +74,7 @@ function parseRecipeNLG(recipe) {
  * Read RecipeNLG dataset from JSON file
  */
 async function readRecipeNLGDataset(limit = MAX_RECIPES) {
-  console.log(`📖 Reading RecipeNLG dataset from: ${DATASET_PATH}`);
+  console.log(`Reading RecipeNLG dataset from: ${DATASET_PATH}`);
   
   if (!fs.existsSync(DATASET_PATH)) {
     throw new Error(`Dataset file not found: ${DATASET_PATH}\n
@@ -117,7 +117,7 @@ async function readRecipeNLGDataset(limit = MAX_RECIPES) {
     }
   }
 
-  console.log(`✅ Loaded ${recipes.length} recipes from RecipeNLG dataset`);
+  console.log(`Loaded ${recipes.length} recipes from RecipeNLG dataset`);
   return recipes;
 }
 
@@ -125,53 +125,49 @@ async function readRecipeNLGDataset(limit = MAX_RECIPES) {
  * Read CSV format (if using full_dataset.csv)
  */
 async function readRecipeNLGCSV(limit = MAX_RECIPES) {
-  console.log(`📖 Reading RecipeNLG CSV from: ${DATASET_PATH}`);
+  console.log(`Reading RecipeNLG CSV from: ${DATASET_PATH}`);
   
   return new Promise((resolve, reject) => {
     const recipes = [];
-    const fileStream = fs.createReadStream(DATASET_PATH);
-    
-    const rl = readline.createInterface({
-      input: fileStream,
-      crlfDelay: Infinity
-    });
+    const stream = fs.createReadStream(DATASET_PATH, { encoding: 'utf8' })
+      .pipe(csv())
+      .on('data', (row) => {
+        if (recipes.length >= limit) {
+          stream.destroy();
+          return;
+        }
 
-    let isFirstLine = true;
-    let headers = [];
+        try {
+          // Process the row
+          const recipe = {};
+          for (const [key, value] of Object.entries(row)) {
+            const header = key.trim();
+            let val = value?.trim() || '';
+            
+            if (header === 'ingredients' || header === 'directions') {
+              // Fix double quotes and parse JSON
+              val = val.replace(/""/g, '\\"');
+              try {
+                recipe[header] = JSON.parse(val);
+              } catch (e) {
+                console.warn(`Failed to parse ${header} for recipe: ${e.message}`);
+                recipe[header] = [];
+              }
+            } else {
+              recipe[header] = val;
+            }
+          }
 
-    rl.on('line', (line) => {
-      if (isFirstLine) {
-        headers = line.split(',');
-        isFirstLine = false;
-        return;
-      }
-
-      if (recipes.length >= limit) {
-        rl.close();
-        return;
-      }
-
-      try {
-        // Basic CSV parsing (may need adjustment for complex CSVs)
-        const values = line.split(',');
-        const recipe = {};
-        
-        headers.forEach((header, i) => {
-          recipe[header.trim()] = values[i]?.trim();
-        });
-
-        recipes.push(parseRecipeNLG(recipe));
-      } catch (error) {
-        // Skip invalid rows
-      }
-    });
-
-    rl.on('close', () => {
-      console.log(`✅ Loaded ${recipes.length} recipes from CSV`);
-      resolve(recipes);
-    });
-
-    rl.on('error', reject);
+          recipes.push(parseRecipeNLG(recipe));
+        } catch (error) {
+          // Skip invalid rows
+        }
+      })
+      .on('end', () => {
+        console.log(`Loaded ${recipes.length} recipes from CSV`);
+        resolve(recipes);
+      })
+      .on('error', reject);
   });
 }
 
@@ -179,7 +175,7 @@ async function readRecipeNLGCSV(limit = MAX_RECIPES) {
  * Step 1: Import batch of recipes
  */
 async function importBatch(recipes, source = 'dataset') {
-  console.log(`\n📥 Importing ${recipes.length} recipes from ${source}...`);
+  console.log(`\nImporting ${recipes.length} recipes from ${source}...`);
   
   const response = await fetch(`${API_BASE_URL}/import/batch`, {
     method: 'POST',
@@ -195,7 +191,7 @@ async function importBatch(recipes, source = 'dataset') {
   }
 
   const result = await response.json();
-  console.log(`✅ Imported successfully! Batch ID: ${result.batchId}`);
+  console.log(`Imported successfully! Batch ID: ${result.batchId}`);
   return result.batchId;
 }
 
@@ -203,7 +199,7 @@ async function importBatch(recipes, source = 'dataset') {
  * Step 2: Run AI classification on batch
  */
 async function classifyBatch(batchId) {
-  console.log(`\n🤖 Running AI classification on batch ${batchId}...`);
+  console.log(`\nRunning AI classification on batch ${batchId}...`);
   
   let hasMore = true;
   let totalProcessed = 0;
@@ -235,7 +231,7 @@ async function classifyBatch(batchId) {
     }
   }
 
-  console.log(`✅ Classification complete! Total African recipes: ${totalAfrican}/${totalProcessed}`);
+  console.log(`Classification complete! Total African recipes: ${totalAfrican}/${totalProcessed}`);
   return { totalProcessed, totalAfrican };
 }
 
@@ -243,7 +239,7 @@ async function classifyBatch(batchId) {
  * Step 3: Get pending African recipes for review
  */
 async function getPendingRecipes() {
-  console.log(`\n📋 Fetching pending African recipes...`);
+  console.log(`\nFetching pending African recipes...`);
   
   const response = await fetch(`${API_BASE_URL}/import/pending`, {
     headers: {
@@ -256,7 +252,7 @@ async function getPendingRecipes() {
   }
 
   const recipes = await response.json();
-  console.log(`✅ Found ${recipes.length} pending African recipes`);
+  console.log(`Found ${recipes.length} pending African recipes`);
   
   // Display summary
   recipes.slice(0, 5).forEach(recipe => {
@@ -274,7 +270,7 @@ async function getPendingRecipes() {
  * Step 4: Normalize a recipe (ingredients & instructions)
  */
 async function normalizeRecipe(recipeId) {
-  console.log(`\n🔄 Normalizing recipe ${recipeId}...`);
+  console.log(`\nNormalizing recipe ${recipeId}...`);
   
   const response = await fetch(`${API_BASE_URL}/import/normalize/${recipeId}`, {
     method: 'POST',
@@ -288,7 +284,7 @@ async function normalizeRecipe(recipeId) {
   }
 
   const result = await response.json();
-  console.log(`✅ Normalized: ${result.ingredients} ingredients, ${result.instructions} instructions`);
+  console.log(`Normalized: ${result.ingredients} ingredients, ${result.instructions} instructions`);
   return result;
 }
 
@@ -296,7 +292,7 @@ async function normalizeRecipe(recipeId) {
  * Step 5: Approve and migrate recipe to main tables
  */
 async function approveRecipe(recipeId) {
-  console.log(`\n✅ Approving recipe ${recipeId}...`);
+  console.log(`\nApproving recipe ${recipeId}...`);
   
   const response = await fetch(`${API_BASE_URL}/import/approve/${recipeId}`, {
     method: 'POST',
@@ -310,7 +306,7 @@ async function approveRecipe(recipeId) {
   }
 
   const result = await response.json();
-  console.log(`✅ Recipe approved! New recipe ID: ${result.recipeId}`);
+  console.log(`Recipe approved! New recipe ID: ${result.recipeId}`);
   return result.recipeId;
 }
 
@@ -319,14 +315,14 @@ async function approveRecipe(recipeId) {
  */
 async function main() {
   try {
-    console.log('🚀 Starting RecipeNLG import workflow...');
+    console.log('Starting RecipeNLG import workflow...');
     console.log(`API: ${API_BASE_URL}`);
     console.log(`Max recipes: ${MAX_RECIPES}`);
     console.log(`Batch size: ${BATCH_SIZE}`);
     console.log(`Target African recipes to save: ${TARGET_AFRICAN}`);
 
     if (!AUTH_TOKEN) {
-      console.error('❌ ERROR: AUTH_TOKEN environment variable is required');
+      console.error('ERROR: AUTH_TOKEN environment variable is required');
       console.log('   Get your token by logging in and copy it from browser DevTools');
       console.log('   Then run: export AUTH_TOKEN="your_token_here"');
       process.exit(1);
@@ -338,7 +334,7 @@ async function main() {
       : await readRecipeNLGDataset(MAX_RECIPES);
 
     if (allRecipes.length === 0) {
-      console.error('❌ No recipes loaded from dataset');
+      console.error('No recipes loaded from dataset');
       process.exit(1);
     }
 
@@ -348,7 +344,7 @@ async function main() {
       batches.push(allRecipes.slice(i, i + BATCH_SIZE));
     }
 
-    console.log(`\n📦 Processing ${allRecipes.length} recipes in ${batches.length} batches\n`);
+    console.log(`\nProcessing ${allRecipes.length} recipes in ${batches.length} batches\n`);
 
     let totalAfrican = 0;
     let totalProcessed = 0;
@@ -369,7 +365,7 @@ async function main() {
       totalProcessed += processed;
       totalAfrican += african;
 
-      console.log(`\n✅ Batch ${i + 1} complete: ${african} African recipes found out of ${processed}`);
+      console.log(`\nBatch ${i + 1} complete: ${african} African recipes found out of ${processed}`);
 
       // After classification, fetch pending African recipes and auto-normalize/approve
       // until we reach TARGET_AFRICAN. This helps stop early when enough recipes saved.
@@ -392,7 +388,7 @@ async function main() {
             await normalizeRecipe(recipeId);
             await approveRecipe(recipeId);
             totalAfrican += 1;
-            console.log(`   ➕ Approved and saved recipe (id: ${recipeId}). Total saved: ${totalAfrican}/${TARGET_AFRICAN}`);
+            console.log(`   Approved and saved recipe (id: ${recipeId}). Total saved: ${totalAfrican}/${TARGET_AFRICAN}`);
             // Short delay to avoid hammering the API
             await new Promise(resolve => setTimeout(resolve, 500));
           } catch (err) {
@@ -409,7 +405,7 @@ async function main() {
 
       // Small delay between batches
       if (i < batches.length - 1) {
-        console.log('   ⏳ Waiting 3 seconds before next batch...');
+        console.log('   Waiting 3 seconds before next batch...');
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
@@ -419,7 +415,7 @@ async function main() {
     const pendingRecipes = await getPendingRecipes();
 
     if (pendingRecipes.length > 0) {
-      console.log('\n📋 Top 10 African Recipes by Confidence:\n');
+      console.log('\nTop 10 African Recipes by Confidence:\n');
       
       pendingRecipes.slice(0, 10).forEach((recipe, i) => {
         console.log(`${i + 1}. ${recipe.name}`);
@@ -429,7 +425,7 @@ async function main() {
       });
 
       // Ask if user wants to auto-approve high-confidence recipes
-      console.log('\n💡 Next Steps:');
+      console.log('\nNext Steps:');
       console.log('   1. Review pending recipes at /api/import/pending');
       console.log('   2. Normalize ingredients/instructions: POST /api/import/normalize/:id');
       console.log('   3. Approve recipes: POST /api/import/approve/:id');
@@ -437,21 +433,21 @@ async function main() {
     }
 
     console.log('\n' + '='.repeat(60));
-    console.log('🎉 Import workflow completed successfully!');
+    console.log('Import workflow completed successfully!');
     console.log('='.repeat(60));
-    console.log('\n📊 Final Summary:');
+    console.log('\nFinal Summary:');
     console.log(`   - Total recipes processed: ${totalProcessed}`);
     console.log(`   - African recipes found: ${totalAfrican} (${(totalAfrican/totalProcessed*100).toFixed(1)}%)`);
     console.log(`   - Pending review: ${pendingRecipes.length}`);
     console.log(`   - Batches created: ${batchIds.length}`);
-    console.log('\n💰 Estimated Cost:');
+    console.log('\nEstimated Cost:');
     console.log(`   - Classification: ~$${(totalProcessed * 0.003).toFixed(2)}`);
     console.log(`   - Total recipes to normalize: ${pendingRecipes.length}`);
     console.log(`   - Estimated normalization cost: ~$${(pendingRecipes.length * 0.005).toFixed(2)}`);
     console.log(`   - Grand total: ~$${(totalProcessed * 0.003 + pendingRecipes.length * 0.005).toFixed(2)}\n`);
 
   } catch (error) {
-    console.error('\n❌ Error:', error.message);
+    console.error('\nError:', error.message);
     if (error.stack) {
       console.error('\nStack trace:', error.stack);
     }

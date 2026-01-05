@@ -1,3 +1,6 @@
+-- Enable vector extension for embeddings (semantic search)
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -22,6 +25,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image_path VARCHAR(500),
+    embedding vector(1536),  -- OpenAI text-embedding-3-small for semantic search
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
@@ -56,6 +60,7 @@ CREATE TABLE IF NOT EXISTS favorites (
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_recipes_category_id ON recipes(category_id);
 CREATE INDEX IF NOT EXISTS idx_recipes_user_id ON recipes(user_id);
+CREATE INDEX IF NOT EXISTS idx_recipes_embedding ON recipes USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS idx_ingredients_recipe_id ON ingredients(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_instructions_recipe_id ON instructions(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_instructions_step_number ON instructions(recipe_id, step_number);

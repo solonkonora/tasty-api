@@ -10,9 +10,11 @@
  * node scripts/generate-embeddings.js
  */
 
-require('dotenv').config();
-const { query } = require('../db_config/queryHelper');
-const { generateEmbedding, prepareRecipeTextForEmbedding } = require('../utils/embeddings');
+import dotenv from 'dotenv';
+import { query } from '../db_config/queryHelper.js';
+import { generateEmbedding, prepareRecipeTextForEmbedding } from '../utils/embeddings.js';
+
+dotenv.config();
 
 /**
  * Get recipes that need embeddings
@@ -26,7 +28,7 @@ async function getRecipesNeedingEmbeddings() {
       c.name as category_name,
       COALESCE(
         json_agg(
-          DISTINCT jsonb_build_object(
+          jsonb_build_object(
             'name', i.name,
             'ingredient_name', i.name,
             'quantity', i.quantity,
@@ -38,7 +40,7 @@ async function getRecipesNeedingEmbeddings() {
       ) as ingredients,
       COALESCE(
         json_agg(
-          DISTINCT jsonb_build_object(
+          jsonb_build_object(
             'step_number', ins.step_number,
             'description', ins.description
           ) ORDER BY ins.step_number
@@ -81,7 +83,7 @@ async function generateRecipeEmbedding(recipe) {
     
     return true;
   } catch (error) {
-    console.error(`  ❌ Error for recipe ${recipe.id}:`, error.message);
+    console.error(` Error for recipe ${recipe.id}:`, error.message);
     return false;
   }
 }
@@ -98,7 +100,7 @@ async function processRecipesInBatches(recipes, batchSize = 10) {
     const batchNumber = Math.floor(i / batchSize) + 1;
     const totalBatches = Math.ceil(recipes.length / batchSize);
     
-    console.log(`\n📦 Processing batch ${batchNumber}/${totalBatches} (${batch.length} recipes)`);
+    console.log(`\n Processing batch ${batchNumber}/${totalBatches} (${batch.length} recipes)`);
     
     // Process batch in parallel
     const results = await Promise.allSettled(
@@ -111,15 +113,15 @@ async function processRecipesInBatches(recipes, batchSize = 10) {
         successCount++;
       } else {
         errorCount++;
-        console.error(`  ❌ Failed: ${batch[index].title}`);
+        console.error(`Failed: ${batch[index].title}`);
       }
     });
     
-    console.log(`  ✅ Batch complete: ${successCount} successful, ${errorCount} errors`);
+    console.log(`Batch complete: ${successCount} successful, ${errorCount} errors`);
     
     // Rate limiting delay (OpenAI has ~3500 RPM limit)
     if (i + batchSize < recipes.length) {
-      console.log('  ⏳ Waiting 2 seconds before next batch...');
+      console.log('Waiting 2 seconds before next batch...');
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
@@ -132,58 +134,56 @@ async function processRecipesInBatches(recipes, batchSize = 10) {
  */
 async function main() {
   try {
-    console.log('🚀 Starting embedding generation for existing recipes...\n');
+    console.log('Starting embedding generation for existing recipes...\n');
     
     // Check OpenAI API key
     if (!process.env.OPENAI_API_KEY) {
-      console.error('❌ ERROR: OPENAI_API_KEY environment variable is required');
+      console.error('ERROR: OPENAI_API_KEY environment variable is required');
       process.exit(1);
     }
     
     // Get recipes needing embeddings
-    console.log('📋 Fetching recipes without embeddings...');
+    console.log('Fetching recipes without embeddings...');
     const recipes = await getRecipesNeedingEmbeddings();
     
     if (recipes.length === 0) {
-      console.log('✅ All recipes already have embeddings!');
+      console.log('All recipes already have embeddings!');
       return;
     }
     
-    console.log(`\n📊 Found ${recipes.length} recipes needing embeddings`);
-    console.log(`💰 Estimated cost: $${(recipes.length * 0.00002).toFixed(4)} (~$0.02 per 1000 recipes)\n`);
+    console.log(`\nFound ${recipes.length} recipes needing embeddings`);
+    console.log(`Estimated cost: $${(recipes.length * 0.00002).toFixed(4)} (~$0.02 per 1000 recipes)\n`);
     
     // Process recipes
     const { successCount, errorCount } = await processRecipesInBatches(recipes, 10);
     
     console.log('\n' + '='.repeat(60));
-    console.log('🎉 Embedding generation completed!');
+    console.log('Embedding generation completed!');
     console.log('='.repeat(60));
-    console.log(`✅ Successful: ${successCount} recipes`);
-    console.log(`❌ Errors: ${errorCount} recipes`);
-    console.log(`📊 Success rate: ${((successCount / recipes.length) * 100).toFixed(1)}%`);
+    console.log(`Successful: ${successCount} recipes`);
+    console.log(`Errors: ${errorCount} recipes`);
+    console.log(`Success rate: ${((successCount / recipes.length) * 100).toFixed(1)}%`);
     
     if (successCount > 0) {
-      console.log('\n✨ Your recipes now support semantic search!');
+      console.log('\n Your recipes now support semantic search!');
       console.log('   - POST /api/search/semantic - Natural language search');
       console.log('   - GET /api/search/similar/:id - Find similar recipes');
       console.log('   - POST /api/search/hybrid - Combined keyword + semantic');
     }
     
   } catch (error) {
-    console.error('\n❌ Fatal error:', error);
+    console.error('\n Fatal error:', error);
     process.exit(1);
   }
 }
 
-// Run if executed directly
-if (require.main === module) {
-  main().then(() => {
-    console.log('\n✅ Script completed successfully\n');
-    process.exit(0);
-  }).catch(error => {
-    console.error('\n❌ Script failed:', error);
-    process.exit(1);
-  });
-}
+// Run the script
+main().then(() => {
+  console.log('\n Script completed successfully\n');
+  process.exit(0);
+}).catch(error => {
+  console.error('\n Script failed:', error);
+  process.exit(1);
+});
 
-module.exports = { getRecipesNeedingEmbeddings, generateRecipeEmbedding };
+export { getRecipesNeedingEmbeddings, generateRecipeEmbedding };

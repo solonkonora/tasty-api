@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import { query } from '../db_config/queryHelper.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { HfInference } from '@huggingface/inference';
@@ -23,6 +24,42 @@ async function safeTextGeneration(params) {
     // Return empty generated_text so caller can continue gracefully
     return { generated_text: '' };
   }
+}
+
+// African cuisine detection configuration
+const AFRICAN_CONFIDENCE_THRESHOLD = parseFloat(process.env.AFRICAN_CONFIDENCE_THRESHOLD) || 0.7;
+const AFRICAN_KEYWORD_THRESHOLD = parseInt(process.env.AFRICAN_KEYWORD_THRESHOLD) || 1;
+
+// Starter curated keyword lists (expand as needed)
+const AFRICAN_PROTEINS = [
+  'goat meat', 'beef', 'ox', 'lamb', 'chicken', 'smoked fish', 'tilapia', 'mackerel', 'catfish', 'prawns', 'crayfish', 'yabby', 'beans', 'lentils', 'cowpeas', 'black-eyed peas', 'egusi', 'groundnut', 'peanut'
+];
+const AFRICAN_SPICES = [
+  'berbere', 'harissa', 'Ginger', 'Garlic', 'Cumin', 'Coriander', 'Cloves', 'Cinnamon', 'Turmeric', 'piri piri', 'piri', 'suya', 'egusi', 'calabash nutmeg', 'dawadawa', 'iru', 'palm oil', 'alligator pepper'
+];
+const AFRICAN_CARBS = [
+  'fufu', 'ugali', 'banku', 'couscous', 'injera', 'teff', 'cassava', 'yam', 'plantain', 'maize', 'pap', 'sadza', 'matoke', 'bananas', 'rice', 'millet', 'sorghum', 'garri', 'tapioca', 'legumes'
+];
+const AFRICAN_DISH_NAMES = [
+  'jollof', 'egusi-soup', 'suya', 'yassa', 'tagine', 'ndole', 'ugali', 'matoke', 'injera', 'bobotie', 'piri-piri', 'banga', 'moambe', 'cornchaff', 'koki', 'fufu', 'chakalaka', 'bunny chow', 'achu', 'mbuzi', 'nyama choma', 'yams'
+];
+
+function findKeywordMatches(text) {
+  if (!text || typeof text !== 'string') return [];
+  const t = text.toLowerCase();
+  const found = new Set();
+
+  const lists = [AFRICAN_PROTEINS, AFRICAN_SPICES, AFRICAN_CARBS, AFRICAN_DISH_NAMES];
+  for (const list of lists) {
+    for (const kw of list) {
+      const safeKw = kw.toLowerCase();
+      // word boundary check
+      const re = new RegExp('\\b' + safeKw.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&') + '\\b', 'i');
+      if (re.test(t)) found.add(kw);
+    }
+  }
+
+  return Array.from(found);
 }
 
 /**
@@ -163,6 +200,41 @@ Respond with ONLY valid JSON:
           classification.reasoning = 'Parse error';
         }
 
+        // Keyword-based fallback/boost: check ingredients/title for typical African indicators
+        try {
+          const combinedText = `${recipe.title || ''} ${recipe.raw_ingredients || ''}`;
+          const matches = findKeywordMatches(combinedText);
+          const matchCount = matches.length;
+
+          // Decision rules:
+          // - Accept model if it predicts African with confidence >= AFRICAN_CONFIDENCE_THRESHOLD
+          // - Otherwise, if keyword matches >= AFRICAN_KEYWORD_THRESHOLD, mark as African
+          // - Otherwise leave model decision as-is
+          let finalIsAfrican = classification.isAfrican && (classification.confidence >= AFRICAN_CONFIDENCE_THRESHOLD);
+          let decisionNote = `model:isAfrican=${classification.isAfrican},confidence=${classification.confidence}`;
+
+          if (!finalIsAfrican && matchCount >= AFRICAN_KEYWORD_THRESHOLD) {
+            finalIsAfrican = true;
+            decisionNote += `; keyword_match=${matches.join(',')}`;
+          }
+
+          // If model said African but confidence low, and keywords present, boost confidence slightly
+          if (classification.isAfrican && classification.confidence < AFRICAN_CONFIDENCE_THRESHOLD && matchCount > 0) {
+            classification.confidence = Math.min(1, classification.confidence + 0.2);
+            decisionNote += `; boosted_confidence=${classification.confidence}`;
+          }
+
+          // Attach a brief decision reason to classification.reasoning for logs
+          classification.reasoning = (classification.reasoning || '') + ` [decision:${finalIsAfrican ? 'AFRICAN' : 'NOT_AFRICAN'}; ${decisionNote}]`;
+
+          // Use the final decision
+          classification.isAfrican = finalIsAfrican;
+
+          if (matchCount > 0) console.log(`Keyword matches for recipe ${recipe.id}:`, matches);
+        } catch (kwErr) {
+          console.error('Keyword detection error:', kwErr && kwErr.message ? kwErr.message : kwErr);
+        }
+
         // Update recipe with classification
         await query(
           `UPDATE temp_recipes_import 
@@ -261,6 +333,7 @@ router.post('/normalize/:recipeId', authenticateToken, async (req, res) => {
     let ingredients = [];
     try {
       const text = ingredientCompletion.generated_text || '';
+      fs.appendFileSync('hf_logs.txt', `Recipe ${recipeId} ingredient response: ${text}\n`);
       const match = text.match(/\[.*\]/s);
       if (match) {
         ingredients = JSON.parse(match[0]);
@@ -283,6 +356,7 @@ router.post('/normalize/:recipeId', authenticateToken, async (req, res) => {
     let instructions = [];
     try {
       const text = instructionCompletion.generated_text || '';
+      fs.appendFileSync('hf_logs.txt', `Recipe ${recipeId} instruction response: ${text}\n`);
       const match = text.match(/\[.*\]/s);
       if (match) {
         instructions = JSON.parse(match[0]);

@@ -1,12 +1,18 @@
-import { HfInference } from '@huggingface/inference';
+import OpenAI from 'openai';
 
-// Initialize Hugging Face client
-const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+if (!process.env.OPENAI_API_KEY) {
+  console.warn('OpenAI API key not found. Embeddings will not work.');
+}
 
 /**
- * Generate embedding for text using Hugging Face
+ * Generate embedding for text using OpenAI
  * @param {string} text - Text to embed
- * @returns {Promise<number[]>} - Embedding vector
+ * @returns {Promise<number[]>} - Embedding vector (1536 dimensions)
  */
 async function generateEmbedding(text) {
   if (!text || typeof text !== 'string') {
@@ -14,14 +20,14 @@ async function generateEmbedding(text) {
   }
 
   try {
-    // Use sentence-transformers model for embeddings (384 dimensions, free)
-    const response = await hf.featureExtraction({
-      model: 'sentence-transformers/all-MiniLM-L6-v2',
-      inputs: text.trim()
+    // Use OpenAI text-embedding-3-small model (1536 dimensions)
+    const response = await openai.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: text.trim(),
+      encoding_format: 'float',
     });
 
-    // The response is already an array of numbers (embedding vector)
-    return Array.isArray(response[0]) ? response[0] : response;
+    return response.data[0].embedding;
   } catch (error) {
     console.error('Error generating embedding:', error);
     throw error;
@@ -92,30 +98,19 @@ async function generateBatchEmbeddings(texts) {
     throw new Error('Texts must be a non-empty array');
   }
 
-  // Hugging Face feature extraction (batch)
-  const batchSize = 32; // Hugging Face models may have lower batch limits
-  const allEmbeddings = [];
+  try {
+    // OpenAI supports batch embedding generation
+    const response = await openai.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: texts.map(text => text.trim()),
+      encoding_format: 'float',
+    });
 
-  for (let i = 0; i < texts.length; i += batchSize) {
-    const batch = texts.slice(i, i + batchSize);
-    try {
-      const response = await hf.featureExtraction({
-        model: 'sentence-transformers/all-MiniLM-L6-v2',
-        inputs: batch.map(text => text.trim())
-      });
-      // Response is an array of arrays
-      if (Array.isArray(response) && Array.isArray(response[0])) {
-        allEmbeddings.push(...response);
-      } else if (Array.isArray(response)) {
-        allEmbeddings.push(response);
-      }
-    } catch (error) {
-      console.error(`Error generating batch embeddings (batch ${i / batchSize + 1}):`, error);
-      throw error;
-    }
+    return response.data.map(item => item.embedding);
+  } catch (error) {
+    console.error('Error generating batch embeddings:', error);
+    throw error;
   }
-
-  return allEmbeddings;
 }
 
 /**

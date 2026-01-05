@@ -1,3 +1,6 @@
+-- Enable vector extension for embeddings (semantic search)
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
@@ -22,22 +25,13 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Magic Links table for passwordless authentication
-CREATE TABLE IF NOT EXISTS magic_links (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL,
-    token VARCHAR(255) UNIQUE NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    used BOOLEAN DEFAULT FALSE
-);
-
 -- Recipes table
 CREATE TABLE IF NOT EXISTS recipes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image_path VARCHAR(500),
+    embedding vector(1536),  -- OpenAI text-embedding-3-small for semantic search
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
@@ -76,6 +70,7 @@ CREATE TABLE IF NOT EXISTS favorites (
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_recipes_category_id ON recipes(category_id);
 CREATE INDEX IF NOT EXISTS idx_recipes_user_id ON recipes(user_id);
+CREATE INDEX IF NOT EXISTS idx_recipes_embedding ON recipes USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS idx_ingredients_recipe_id ON ingredients(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_ingredients_is_main ON ingredients(is_main);
 CREATE INDEX IF NOT EXISTS idx_instructions_recipe_id ON instructions(recipe_id);
@@ -85,5 +80,3 @@ CREATE INDEX IF NOT EXISTS idx_favorites_recipe_id ON favorites(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_users_facebook_id ON users(facebook_id);
 CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_token);
-CREATE INDEX IF NOT EXISTS idx_magic_links_token ON magic_links(token);
-CREATE INDEX IF NOT EXISTS idx_magic_links_email ON magic_links(email);
