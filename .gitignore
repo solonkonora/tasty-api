@@ -48,6 +48,10 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+# Large dataset files
+scripts/data/RecipeNLG_dataset.csv
+scripts/data/*.csv
+
 # Optional npm cache directory
 .npm
 
