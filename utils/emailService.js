@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend only if API key is available
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Email configuration
 const FROM_EMAIL = process.env.FROM_EMAIL || 'LocalBite <onboarding@resend.dev>';
@@ -13,6 +14,12 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
  * @returns {Promise<Object>} Resend API response
  */
 export async function sendVerificationEmail(email, token) {
+  // Skip sending email if Resend is not configured
+  if (!resend) {
+    console.warn('Email service not configured. Verification email not sent.');
+    return { success: false, message: 'Email service not configured' };
+  }
+
   const verificationLink = `${FRONTEND_URL}/auth/verify-email?token=${token}`;
 
   try {
@@ -81,6 +88,12 @@ export async function sendVerificationEmail(email, token) {
  * @returns {Promise<Object>} Resend API response
  */
 export async function sendWelcomeEmail(email, fullName) {
+  // Skip sending email if Resend is not configured
+  if (!resend) {
+    console.warn('Email service not configured. Welcome email not sent.');
+    return { success: false, message: 'Email service not configured' };
+  }
+
   try {
     const data = await resend.emails.send({
       from: FROM_EMAIL,
