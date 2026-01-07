@@ -140,9 +140,8 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-/**
- * Get current authenticated user
- */
+  // Get current authenticated user
+ 
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
