@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import pool from '../db_config/db.js';
-import { generateToken } from '../middleware/auth.js';
+import { generateToken, authenticateToken } from '../middleware/auth.js';
 import passport from '../config/passport.js';
 import { sendWelcomeEmail, sendVerificationEmail } from '../utils/emailService.js';
 
@@ -140,9 +140,26 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-// ========================================
-// Email Verification
-// ========================================
+/**
+ * Get current authenticated user
+ */
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, email, full_name, created_at, email_verified FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('Get current user error:', error);
+    res.status(500).json({ error: 'Failed to get user information' });
+  }
+});
 
 /**
  * Verify email address using token from email
@@ -272,13 +289,10 @@ router.post('/resend-verification', async (req, res) => {
     res.status(500).json({ error: 'Failed to resend verification email' });
   }
 });
-// Google OAuth Routes
-// ========================================
 
-/**
- * Initiates Google OAuth flow
- * Frontend redirects to this endpoint
- */
+//  Initiates Google OAuth flow
+//  Frontend redirects to this endpoint
+
 router.get('/google',
   passport.authenticate('google', { 
     scope: ['profile', 'email'],
@@ -321,14 +335,9 @@ router.get('/google/callback',
   }
 );
 
-// ========================================
-// Facebook OAuth Routes
-// ========================================
-
-/**
- * Initiates Facebook OAuth flow
- * Frontend redirects to this endpoint
- */
+//  Initiates Facebook OAuth flow
+//  Frontend redirects to this endpoint
+ 
 router.get('/facebook',
   passport.authenticate('facebook', { 
     scope: ['public_profile'], // Only request public_profile (no email required)
