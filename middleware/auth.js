@@ -49,7 +49,7 @@ export function optionalAuth(req, res, next) {
 // Generate JWT token
 export function generateToken(userId, email) {
   return jwt.sign(
-    { userId, email },
+    { id: userId, userId, email }, // Include both 'id' and 'userId' for compatibility
     JWT_SECRET,
     { expiresIn: '7d' }
   );
